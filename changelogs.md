@@ -5,9 +5,9 @@
 
 - Added Changelogs.
   
-- Changed checking meds behind CAPSULE or TABLET instead of in parenthesis.
+- Changed checking meds behind CAPSULE/TABLET/BOX instead of in parenthesis.
   
-- Fixed TABLET count finding the a number before period on the medication instead.
+- Fixed CAPSULTE/TABLET/BOX count finding a number before period on the medication instead.
 
 - added a last update date
 
