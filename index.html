@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Work Formatter</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: #111;
+            color: white;
+            padding: 20px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 250px;
+            background: #222;
+            color: white;
+            border: 1px solid #555;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #output {
+            white-space: pre-wrap;
+            background: #222;
+            padding: 15px;
+            margin-top: 20px;
+            border: 1px solid #555;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Medical Entry Formatter</h1>
+
+    <textarea id="input" placeholder="Paste raw entries here..."></textarea>
+
+    <br>
+
+    <button onclick="formatEntries()">Format</button>
+
+    <button onclick="copyOutput()">Copy Output</button>
+
+    <div id="output"></div>
+
+    <script>
+
+        function formatEntries() {
+
+            const raw = document.getElementById("input").value;
+
+            const lines = raw
+                .split("\n")
+                .map(x => x.trim())
+                .filter(x => x);
+
+            // NAME
+            let name = "";
+
+            for (const line of lines) {
+
+                if (
+                    /^[A-Z ]+$/.test(line) &&
+                    !line.includes("WHATSAPP") &&
+                    line.split(" ").length >= 2
+                ) {
+                    name = line;
+                    break;
+                }
+            }
+
+            // IC
+            let ic = "";
+            let icIndex = -1;
+
+            lines.forEach((line, index) => {
+
+                if (/^\d{12}$/.test(line)) {
+                    ic = line;
+                    icIndex = index;
+                }
+            });
+
+            // ADDRESS
+            let addressParts = [];
+
+            for (let i = icIndex + 1; i < lines.length; i++) {
+
+                const line = lines[i];
+
+                if (line.toUpperCase().includes("SDN BHD"))
+                    break;
+
+                if (line === "-")
+                    continue;
+
+                addressParts.push(line);
+            }
+
+            let address = addressParts.join(", ");
+
+            address = address
+                .replace(/,\s*,+/g, ",")
+                .replace(/\s+/g, " ")
+                .trim();
+
+            // MEDICINE
+            let medicine = "";
+
+            for (let i = lines.length - 1; i >= 0; i--) {
+
+                if (lines[i].toUpperCase().includes("MG")) {
+                    medicine = lines[i];
+                    break;
+                }
+            }
+
+            const formatted =
+                `${name} || ${address} || ${ic} || ${medicine}`;
+
+            document.getElementById("output").innerText = formatted;
+        }
+
+        function copyOutput() {
+
+            const text =
+                document.getElementById("output").innerText;
+
+            navigator.clipboard.writeText(text);
+
+            alert("Copied!");
+        }
+
+    </script>
+
+</body>
+</html>
