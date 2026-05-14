@@ -1,419 +1,540 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Work Formatter</title>
 
+    <!-- FONTS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
     <style>
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Inter', sans-serif;
             background: #111;
             color: white;
-            padding: 20px;
+            padding: 30px;
             margin: 0;
         }
 
-        h1 {
-            margin-bottom: 20px;
+        /* TOP */
+
+        .topSection {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 25px;
+            text-align: center;
         }
+
+        #lastUpdated {
+            color: #888;
+            font-size: 13px;
+            margin-bottom: 10px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        h1 {
+            margin: 0;
+            margin-bottom: 18px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 42px;
+            letter-spacing: -1px;
+        }
+
+        /* INPUT */
 
         textarea {
             width: 100%;
             height: 300px;
-            background: #1e1e1e;
+            background: #1b1b1b;
             color: white;
-            border: 1px solid #444;
-            border-radius: 8px;
-            padding: 12px;
+            border: 1px solid #333;
+            border-radius: 14px;
+            padding: 14px;
             font-size: 14px;
             box-sizing: border-box;
+            font-family: 'JetBrains Mono', monospace;
+            resize: vertical;
         }
 
-        button {
-            margin-top: 15px;
-            padding: 10px 20px;
-            font-size: 15px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
+        /* BUTTONS */
+
+        .buttonRow {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 14px;
+            margin-top: 18px;
         }
+
+        .mainButton {
+            background: white;
+            color: black;
+            border: none;
+            border-radius: 12px;
+            padding: 10px 18px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .mainButton:hover {
+            transform: translateY(-1px);
+            opacity: 0.92;
+        }
+
+        .changelogBtn {
+            background: none;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .changelogBtn:hover {
+            color: white;
+            text-decoration: underline;
+        }
+
+        /* TABLE */
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 25px;
+            margin-top: 30px;
+            overflow: hidden;
+            border-radius: 14px;
         }
 
         th {
-            background: #222;
-            border: 1px solid #555;
-            padding: 12px;
+            background: #1d1d1d;
+            border: 1px solid #333;
+            padding: 14px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 14px;
+            letter-spacing: 0.5px;
         }
 
         td {
-            border: 1px solid #555;
+            border: 1px solid #333;
             padding: 10px;
             vertical-align: top;
+            background: #161616;
+            font-size: 14px;
         }
 
+        /* COPYABLE BOX */
+
         .copybox {
-            background: #2a2a2a;
+            background: #232323;
             padding: 8px;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: 0.2s;
+            transition: 0.18s;
             word-break: break-word;
         }
 
         .copybox:hover {
-            background: #3a3a3a;
+            background: #2f2f2f;
         }
 
         .copied {
             outline: 2px solid #00cc66;
         }
+
+        /* MODAL */
+
+        #changelogModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modalBox {
+            background: #1b1b1b;
+            width: 420px;
+            height: 320px;
+            border-radius: 18px;
+            padding: 18px;
+            position: relative;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+        }
+
+        .closeBtn {
+            position: absolute;
+            top: 10px;
+            right: 14px;
+            cursor: pointer;
+            font-size: 18px;
+            color: #aaa;
+        }
+
+        .closeBtn:hover {
+            color: white;
+        }
+
+        #changelogContent {
+            white-space: pre-wrap;
+            overflow-y: auto;
+            height: 240px;
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 12px;
+            margin-top: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+        }
+
     </style>
 </head>
 
-    <div id="changelogModal"
-     style="display:none;
-            position:fixed;
-            top:0;
-            left:0;
-            width:100%;
-            height:100%;
-            background:rgba(0,0,0,0.6);
-            justify-content:center;
-            align-items:center;">
+<body>
 
-    <div style="background:#1e1e1e;
-                width:400px;
-                height:300px;
-                border-radius:16px;
-                padding:15px;
-                position:relative;
-                box-shadow:0 0 10px rgba(0,0,0,0.5);">
+    <!-- CHANGELOG MODAL -->
 
-        <!-- CLOSE BUTTON -->
-        <div onclick="closeChangelog()"
-             style="position:absolute;
-                    top:10px;
-                    right:12px;
-                    cursor:pointer;
-                    font-size:18px;
-                    color:white;">
-            ✕
-        </div>
+    <div id="changelogModal">
 
-        <h3 style="margin-top:0;">Changelogs</h3>
+        <div class="modalBox">
 
-        <!-- EDITABLE TEXT AREA -->
-        <div id="changelogContent"
-             style="white-space:pre-wrap;
-                    overflow-y:auto;
-                    height:220px;
-                    background:#111;
-                    border:1px solid #444;
-                    border-radius:10px;
-                    padding:10px;">
-            Loading changelogs...
+            <div class="closeBtn" onclick="closeChangelog()">
+                ✕
+            </div>
+
+            <h3 style="margin-top:0; font-family:'Space Grotesk', sans-serif;">
+                Changelogs
+            </h3>
+
+            <div id="changelogContent">
+                Loading changelogs...
+            </div>
+
         </div>
 
     </div>
-</div>
-    
-<body>
 
-<div id="lastUpdated" style="margin: 10px 0; color: #aaa; font-size: 14px;"></div>
+    <!-- TOP SECTION -->
 
-<h1>Work Formatter</h1>
+    <div class="topSection">
 
-<textarea id="input" placeholder="Paste entries here..."></textarea>
+        <div id="lastUpdated"></div>
 
-<br>
+        <h1>Work Formatter</h1>
 
-<div style="display:flex; gap:10px; margin-top:15px;">
-    
-    <button onclick="formatEntries()">
-        Format Entries
-    </button>
+    </div>
 
-    <button onclick="openChangelog()">
-        Changelogs
-    </button>
+    <!-- INPUT -->
 
-</div>
+    <textarea id="input" placeholder="Paste entries here..."></textarea>
 
-<div id="output"></div>
+    <!-- BUTTONS -->
 
-<script>
-function showLastUpdated() {
+    <div class="buttonRow">
 
-    const lastUpdated = new Date(document.lastModified);
+        <button class="mainButton" onclick="formatEntries()">
+            Format Entries
+        </button>
 
-    document.getElementById("lastUpdated").innerText =
-        "Last updated: " + lastUpdated.toLocaleString();
-}
+        <button class="changelogBtn" onclick="openChangelog()">
+            Changelogs
+        </button>
 
-showLastUpdated();
+    </div>
 
+    <!-- OUTPUT -->
 
-async function loadChangelog() {
+    <div id="output"></div>
 
-    try {
+    <script>
 
-        const response = await fetch('changelogs.md');
+        function showLastUpdated() {
 
-        const text = await response.text();
+            const lastUpdated = new Date(document.lastModified);
 
-        document.getElementById('changelogContent').innerText = text;
-
-    } catch (err) {
-
-        document.getElementById('changelogContent').innerText =
-            'Failed to load changelogs.';
-    }
-}
-    
-function openChangelog() {
-
-    document.getElementById("changelogModal").style.display = "flex";
-
-    loadChangelog();
-}
-
-function closeChangelog() {
-
-    document.getElementById("changelogModal").style.display = "none";
-}
-    
-function cleanLine(line) {
-    return line
-        .replace(/‎/g, '')
-        .trim();
-}
-
-function copyText(element, text) {
-
-    navigator.clipboard.writeText(text);
-
-    element.classList.add('copied');
-
-    setTimeout(() => {
-        element.classList.remove('copied');
-    }, 500);
-}
-
-function formatEntries() {
-
-    const raw = document.getElementById('input').value;
-
-    const lines = raw
-        .split('\n')
-        .map(cleanLine)
-
-    const entries = [];
-
-    let currentEntry = [];
-
-    for (const line of lines) {
-
-        currentEntry.push(line);
-
-        if (line.includes('PR/')) {
-
-            entries.push(currentEntry);
-
-            currentEntry = [];
+            document.getElementById("lastUpdated").innerText =
+                "Last updated: " + lastUpdated.toLocaleString();
         }
-    }
 
-    let html = `
-        <table>
-            <thead>
-                <tr>
-                    <th>TIME</th>
-                    <th>NAME</th>
-                    <th>ADDRESS</th>
-                    <th>IDENTIFICATION</th>
-                    <th>MED</th>
-                    <th>AMOUNT</th>
-                </tr>
-            </thead>
-            <tbody>
-    `;
+        showLastUpdated();
 
-    entries.forEach(entryLines => {
+        async function loadChangelog() {
 
-        // TIME
-        let time = '';
-        
-        const firstLine = entryLines[0] || '';
-        
-        const timeMatch = firstLine.match(/\b(\d{2}:\d{2}:\d{2})\b/);
-        
-        if (timeMatch) {
-            time = timeMatch[1];
+            try {
+
+                const response = await fetch('changelogs.md');
+
+                const text = await response.text();
+
+                document.getElementById('changelogContent').innerText = text;
+
+            } catch (err) {
+
+                document.getElementById('changelogContent').innerText =
+                    'Failed to load changelogs.';
+            }
         }
-        
-        // NAME
-        let name = '';
 
-        const nameMatch =
-            firstLine.match(/\d{2}:\d{2}:\d{2}\s+(.*?)\s+TMF/i);
+        function openChangelog() {
 
-        if (nameMatch) {
-            name = nameMatch[1]
-                .replace(/\s+\.\s*$/, '')
+            document.getElementById("changelogModal").style.display = "flex";
+
+            loadChangelog();
+        }
+
+        function closeChangelog() {
+
+            document.getElementById("changelogModal").style.display = "none";
+        }
+
+        function cleanLine(line) {
+
+            return line
+                .replace(/‎/g, '')
                 .trim();
         }
 
-        // IDENTIFICATION
-        let identification = '';
+        function copyText(element, text) {
 
-        if (entryLines[3]) {
+            navigator.clipboard.writeText(text);
 
-            identification =
-                entryLines[3].replace(/[^a-zA-Z0-9-]/g, '');
+            element.classList.add('copied');
+
+            setTimeout(() => {
+                element.classList.remove('copied');
+            }, 500);
         }
 
-        // ADDRESS
-        let addressLines =
-            entryLines.slice(6, 19);
+        function formatEntries() {
 
-        addressLines = addressLines
-            .map(x => x.trim())
-            .filter(x => x !== '-')
-            .filter(x => x !== '');
+            const raw = document.getElementById('input').value;
 
-        let address = addressLines.join(', ');
+            const lines = raw
+                .split('\n')
+                .map(cleanLine);
 
-        address = address
-            .replace(/,\s*,+/g, ',')
-            .replace(/\s+/g, ' ')
-            .trim();
+            const entries = [];
 
-        // MED
-        let med = '';
+            let currentEntry = [];
 
-        for (const line of entryLines) {
-        
-            if (
-                line.includes('ORIGINAL MED') ||
-                line.includes('GENERIC MED')
-            ) {
-        
-                const afterMed =
-                    line.split(/ORIGINAL MED|GENERIC MED/)[1] || '';
-        
-                // STEP 1: cut everything AFTER CAPSULE/TABLET
-                const beforeType =
-                    afterMed.split(/CAPSULE|TABLET/i)[0] || '';
-        
-                // STEP 2: try brackets ONLY in that safe zone
-                const medMatch =
-                    beforeType.match(/\(([^)]+)\)/);
-        
-                if (medMatch) {
-        
-                    med = medMatch[1].trim();
-        
-                } else {
-        
-                    // STEP 3: fallback (no brackets)
-                    // take last meaningful text chunk before CAPSULE/TABLET
-        
-                    const fallback =
-                        beforeType
-                            .split(/\s{2,}|\t+/)   // split by big spacing
-                            .map(x => x.trim())
-                            .filter(x => x);
-        
-                    med = fallback[fallback.length - 1] || '';
+            for (const line of lines) {
+
+                currentEntry.push(line);
+
+                if (line.includes('PR/')) {
+
+                    entries.push(currentEntry);
+
+                    currentEntry = [];
                 }
             }
-        }
 
-        // AMOUNT
-        let amount = '';
+            let html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>TIME</th>
+                            <th>NAME</th>
+                            <th>ADDRESS</th>
+                            <th>IDENTIFICATION</th>
+                            <th>MED</th>
+                            <th>AMOUNT</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
 
-        for (let i = 0; i < entryLines.length; i++) {
+            entries.forEach(entryLines => {
 
-            const line = entryLines[i];
+                // TIME
 
-            if (
-                line.includes('CAPSULE') ||
-                line.includes('TABLET')
-            ) {
+                let time = '';
 
-                for (let j = i; j < entryLines.length; j++) {
+                const firstLine = entryLines[0] || '';
 
-                    const numMatch =
-                        entryLines[j].match(/(\d+)\.0/);
+                const timeMatch =
+                    firstLine.match(/\b(\d{2}:\d{2}:\d{2})\b/);
 
-                    if (numMatch) {
+                if (timeMatch) {
+                    time = timeMatch[1];
+                }
 
-                        amount = numMatch[1];
+                // NAME
 
-                        break;
+                let name = '';
+
+                const nameMatch =
+                    firstLine.match(/\d{2}:\d{2}:\d{2}\s+(.*?)\s+TMF/i);
+
+                if (nameMatch) {
+
+                    name = nameMatch[1]
+                        .replace(/\s+\.\s*$/, '')
+                        .trim();
+                }
+
+                // IDENTIFICATION
+
+                let identification = '';
+
+                if (entryLines[3]) {
+
+                    identification =
+                        entryLines[3].replace(/[^a-zA-Z0-9-]/g, '');
+                }
+
+                // ADDRESS
+
+                let addressLines =
+                    entryLines.slice(6, 19);
+
+                addressLines = addressLines
+                    .map(x => x.trim())
+                    .filter(x => x !== '-')
+                    .filter(x => x !== '');
+
+                let address = addressLines.join(', ');
+
+                address = address
+                    .replace(/,\s*,+/g, ',')
+                    .replace(/\s+/g, ' ')
+                    .trim();
+
+                // MED
+
+                let med = '';
+
+                for (const line of entryLines) {
+
+                    if (
+                        line.includes('ORIGINAL MED') ||
+                        line.includes('GENERIC MED')
+                    ) {
+
+                        const afterMed =
+                            line.split(/ORIGINAL MED|GENERIC MED/)[1] || '';
+
+                        const beforeType =
+                            afterMed.split(/CAPSULE|TABLET/i)[0] || '';
+
+                        const medMatch =
+                            beforeType.match(/\(([^)]+)\)/);
+
+                        if (medMatch) {
+
+                            med = medMatch[1].trim();
+
+                        } else {
+
+                            const fallback =
+                                beforeType
+                                    .split(/\s{2,}|\t+/)
+                                    .map(x => x.trim())
+                                    .filter(x => x);
+
+                            med = fallback[fallback.length - 1] || '';
+                        }
                     }
                 }
-            }
+
+                // AMOUNT
+
+                let amount = '';
+
+                for (let i = 0; i < entryLines.length; i++) {
+
+                    const line = entryLines[i];
+
+                    if (
+                        line.includes('CAPSULE') ||
+                        line.includes('TABLET')
+                    ) {
+
+                        for (let j = i; j < entryLines.length; j++) {
+
+                            const numMatch =
+                                entryLines[j].match(/(\d+)\.0/);
+
+                            if (numMatch) {
+
+                                amount = numMatch[1];
+
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                html += `
+                    <tr>
+
+                        <td style="color:#888; font-family:'JetBrains Mono', monospace;">
+                            ${time || '-'}
+                        </td>
+
+                        <td>
+                            <div class="copybox"
+                                onclick="copyText(this, '${name}')">
+                                ${name || '-'}
+                            </div>
+                        </td>
+
+                        <td>
+                            <div class="copybox"
+                                onclick="copyText(this, '${address}')">
+                                ${address || '-'}
+                            </div>
+                        </td>
+
+                        <td>
+                            <div class="copybox"
+                                onclick="copyText(this, '${identification}')">
+                                ${identification || '-'}
+                            </div>
+                        </td>
+
+                        <td>
+                            <div class="copybox"
+                                onclick="copyText(this, '${med}')">
+                                ${med || '-'}
+                            </div>
+                        </td>
+
+                        <td>
+                            <div class="copybox"
+                                onclick="copyText(this, '${amount}')">
+                                ${amount || '-'}
+                            </div>
+                        </td>
+
+                    </tr>
+                `;
+            });
+
+            html += `
+                    </tbody>
+                </table>
+            `;
+
+            document.getElementById('output').innerHTML = html;
         }
 
-        html += `
-            <tr>
-                <td style="color:#aaa;">
-                    ${time || '-'}
-                </td>
-                
-                <td>
-                    <div class="copybox"
-                        onclick="copyText(this, '${name}')">
-                        ${name || '-'}
-                    </div>
-                </td>
-
-                <td>
-                    <div class="copybox"
-                        onclick="copyText(this, '${address}')">
-                        ${address || '-'}
-                    </div>
-                </td>
-
-                <td>
-                    <div class="copybox"
-                        onclick="copyText(this, '${identification}')">
-                        ${identification || '-'}
-                    </div>
-                </td>
-
-                <td>
-                    <div class="copybox"
-                        onclick="copyText(this, '${med}')">
-                        ${med || '-'}
-                    </div>
-                </td>
-
-                <td>
-                    <div class="copybox"
-                        onclick="copyText(this, '${amount}')">
-                        ${amount || '-'}
-                    </div>
-                </td>
-
-            </tr>
-        `;
-    });
-
-    html += `
-            </tbody>
-        </table>
-    `;
-
-    document.getElementById('output').innerHTML = html;
-}
-
-</script>
+    </script>
 
 </body>
 </html>
