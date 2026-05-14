@@ -222,14 +222,26 @@
         /* MODAL */
     
         #changelogModal {
-            display: none;
             position: fixed;
             inset: 0;
             background: rgba(0,0,0,0.72);
+            display: flex;
             justify-content: center;
             align-items: center;
             backdrop-filter: blur(6px);
             z-index: 999;
+        
+            /* animation */
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+        }
+        
+        #changelogModal.show {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
         }
     
         .modalBox {
@@ -452,14 +464,18 @@
 
         function openChangelog() {
 
-            document.getElementById("changelogModal").style.display = "flex";
-
+            const modal = document.getElementById("changelogModal");
+    
+            modal.classList.add("show");
+        
             loadChangelog();
         }
-
+    
         function closeChangelog() {
-
-            document.getElementById("changelogModal").style.display = "none";
+    
+            const modal = document.getElementById("changelogModal");
+    
+            modal.classList.remove("show");
         }
 
         function cleanLine(line) {
