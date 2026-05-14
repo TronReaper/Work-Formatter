@@ -164,7 +164,7 @@ function formatEntries() {
         
         const firstLine = entryLines[0] || '';
         
-        const timeMatch = firstLine.match(/^(\d{2}:\d{2}:\d{2})/);
+        const timeMatch = firstLine.match(/\b(\d{2}:\d{2}:\d{2})\b/);
         
         if (timeMatch) {
             time = timeMatch[1];
@@ -278,9 +278,9 @@ function formatEntries() {
         html += `
             <tr>
                 <td>
-                    <div style="padding:8px;">
+                    <td style="color:#aaa;">
                     ${time || '-'}
-                    </div>
+                    </td>
                 </td>
                 
                 <td>
