@@ -146,6 +146,7 @@ function formatEntries() {
         <table>
             <thead>
                 <tr>
+                    <th>TIME</th>
                     <th>NAME</th>
                     <th>ADDRESS</th>
                     <th>IDENTIFICATION</th>
@@ -158,6 +159,17 @@ function formatEntries() {
 
     entries.forEach(entryLines => {
 
+        // TIME
+        let time = '';
+        
+        const firstLine = entryLines[0] || '';
+        
+        const timeMatch = firstLine.match(/^(\d{2}:\d{2}:\d{2})/);
+        
+        if (timeMatch) {
+            time = timeMatch[1];
+        }
+        
         // NAME
         let name = '';
 
@@ -200,43 +212,43 @@ function formatEntries() {
         // MED
         let med = '';
 
-for (const line of entryLines) {
-
-    if (
-        line.includes('ORIGINAL MED') ||
-        line.includes('GENERIC MED')
-    ) {
-
-        const afterMed =
-            line.split(/ORIGINAL MED|GENERIC MED/)[1] || '';
-
-        // STEP 1: cut everything AFTER CAPSULE/TABLET
-        const beforeType =
-            afterMed.split(/CAPSULE|TABLET/i)[0] || '';
-
-        // STEP 2: try brackets ONLY in that safe zone
-        const medMatch =
-            beforeType.match(/\(([^)]+)\)/);
-
-        if (medMatch) {
-
-            med = medMatch[1].trim();
-
-        } else {
-
-            // STEP 3: fallback (no brackets)
-            // take last meaningful text chunk before CAPSULE/TABLET
-
-            const fallback =
-                beforeType
-                    .split(/\s{2,}|\t+/)   // split by big spacing
-                    .map(x => x.trim())
-                    .filter(x => x);
-
-            med = fallback[fallback.length - 1] || '';
+        for (const line of entryLines) {
+        
+            if (
+                line.includes('ORIGINAL MED') ||
+                line.includes('GENERIC MED')
+            ) {
+        
+                const afterMed =
+                    line.split(/ORIGINAL MED|GENERIC MED/)[1] || '';
+        
+                // STEP 1: cut everything AFTER CAPSULE/TABLET
+                const beforeType =
+                    afterMed.split(/CAPSULE|TABLET/i)[0] || '';
+        
+                // STEP 2: try brackets ONLY in that safe zone
+                const medMatch =
+                    beforeType.match(/\(([^)]+)\)/);
+        
+                if (medMatch) {
+        
+                    med = medMatch[1].trim();
+        
+                } else {
+        
+                    // STEP 3: fallback (no brackets)
+                    // take last meaningful text chunk before CAPSULE/TABLET
+        
+                    const fallback =
+                        beforeType
+                            .split(/\s{2,}|\t+/)   // split by big spacing
+                            .map(x => x.trim())
+                            .filter(x => x);
+        
+                    med = fallback[fallback.length - 1] || '';
+                }
+            }
         }
-    }
-}
 
         // AMOUNT
         let amount = '';
@@ -268,6 +280,13 @@ for (const line of entryLines) {
         html += `
             <tr>
 
+                <td>
+                    <div class="copybox"
+                        onclick="copyText(this, '${time}')">
+                        ${time || '-'}
+                    </div>
+                </td>
+                
                 <td>
                     <div class="copybox"
                         onclick="copyText(this, '${name}')">
