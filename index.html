@@ -448,15 +448,22 @@
         async function loadChangelog() {
 
             try {
-
+        
                 const response = await fetch('changelogs.md');
-
                 const text = await response.text();
-
-                document.getElementById('changelogContent').innerText = text;
-
+        
+                const box = document.getElementById('changelogContent');
+        
+                box.innerText = text;
+                requestAnimationFrame(() => {
+                    box.scrollTo({
+                        top: box.scrollHeight,
+                        behavior: "smooth"
+                    });
+                });
+        
             } catch (err) {
-
+        
                 document.getElementById('changelogContent').innerText =
                     'Failed to load changelogs.';
             }
