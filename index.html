@@ -516,7 +516,7 @@
         }
 
         const specialMeds = [
-            "alprazolam",
+            "xanax",
             "apo-alpraz",
             "apo-lorazepam",
             "asolan",
@@ -530,6 +530,11 @@
             "rivotril",
             "somidem",
             "stillnox"
+        ];
+
+        const specialMedExactMatch = [
+            "alprazolam",
+            "apo-alpraz"
         ];
 
         function formatEntries() {
@@ -628,40 +633,67 @@
                     .trim();
 
                 // MED
-
                 let med = '';
-
+                
                 for (const line of entryLines) {
-
-                    if (
-                        line.includes('ORIGINAL MED') ||
-                        line.includes('GENERIC MED')
-                    ) {
-
-                        const afterMed =
-                            line.split(/ORIGINAL MED|GENERIC MED/)[1] || '';
-
-                        const beforeType =
-                            afterMed.split(/CAPSULE|TABLET/i)[0] || '';
-
-                        const medMatch =
-                            beforeType.match(/\(([^)]+)\)/);
-
-                        if (medMatch) {
-
-                            med = medMatch[1].trim();
-
-                        } else {
-
-                            const fallback =
-                                beforeType
-                                    .split(/\s{2,}|\t+/)
-                                    .map(x => x.trim())
-                                    .filter(x => x);
-
-                            med = fallback[fallback.length - 1] || '';
-                        }
+                
+                    const match = line.match(/(ORIGINAL MED|GENERIC MED)\s+(.*)/i);
+                
+                    if (!match) continue;
+                
+                    const afterMedRaw = match[2] || '';
+                
+                    const cleanedAfterMed = afterMedRaw
+                        .replace(/\s+/g, ' ')
+                        .trim();
+                
+                // normalize for checking
+                    const lowerLine = afterMedRaw.toLowerCase();
+                
+                // ------------------------------
+                // 🟡 SPECIAL CASE (XANAX RULE)
+                // ------------------------------
+                    const isXanaxCase =
+                        lowerLine.includes('alprazolam') ||
+                        lowerLine.includes('apo-alpraz');
+                
+                    if (isXanaxCase) {
+                
+                        // take FULL name after MED (before TAB breaks it later)
+                        const fullName = afterMedRaw
+                            .split(/\t|CAPSULE|TABLET/i)[0]
+                            .replace(/\s+/g, ' ')
+                            .trim();
+                
+                        med = fullName;
+                        break;
                     }
+                
+                // ------------------------------
+                // 🟢 NORMAL CASE
+                // ------------------------------
+                    const beforeType =
+                        afterMedRaw.split(/CAPSULE|TABLET/i)[0] || '';
+                
+                    const medMatch =
+                        beforeType.match(/\(([^)]+)\)/);
+                
+                    if (medMatch) {
+                
+                        med = medMatch[1].trim();
+                
+                    } else {
+                
+                        const fallback =
+                            beforeType
+                                .split(/\s{2,}|\t+/)
+                                .map(x => x.trim())
+                                .filter(x => x);
+                
+                        med = fallback[fallback.length - 1] || '';
+                    }
+                
+                    break;
                 }
 
                 // AMOUNT
