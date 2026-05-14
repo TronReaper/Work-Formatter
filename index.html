@@ -5,141 +5,233 @@
 
     <style>
         body {
-            font-family: Arial;
+            font-family: Arial, sans-serif;
             background: #111;
             color: white;
             padding: 20px;
+            margin: 0;
+        }
+
+        h1 {
+            margin-bottom: 20px;
         }
 
         textarea {
             width: 100%;
-            height: 250px;
-            background: #222;
+            height: 300px;
+            background: #1e1e1e;
             color: white;
-            border: 1px solid #555;
-            padding: 10px;
-            margin-bottom: 15px;
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 14px;
+            box-sizing: border-box;
         }
 
         button {
+            margin-top: 15px;
             padding: 10px 20px;
-            font-size: 16px;
+            font-size: 15px;
+            border: none;
+            border-radius: 8px;
             cursor: pointer;
         }
 
-        #output {
-            white-space: pre-wrap;
-            background: #222;
+        .entry {
+            background: #1e1e1e;
+            border: 1px solid #444;
+            border-radius: 10px;
             padding: 15px;
             margin-top: 20px;
+        }
+
+        .field {
+            margin-bottom: 12px;
+        }
+
+        .label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .copybox {
+            background: #2a2a2a;
             border: 1px solid #555;
+            border-radius: 6px;
+            padding: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+            word-break: break-word;
+        }
+
+        .copybox:hover {
+            background: #383838;
+        }
+
+        .copied {
+            border-color: #00cc66;
         }
     </style>
 </head>
-
 <body>
 
-    <h1>Work Formatter</h1>
+<h1>Work Formatter</h1>
 
-    <textarea id="input" placeholder="Paste raw entries here..."></textarea>
+<textarea id="input" placeholder="Paste entries here..."></textarea>
 
-    <br>
+<br>
+<button onclick="formatEntries()">Format Entries</button>
 
-    <button onclick="formatEntries()">Format</button>
+<div id="output"></div>
 
-    <button onclick="copyOutput()">Copy Output</button>
+<script>
 
-    <div id="output"></div>
+function cleanLine(line) {
+    return line
+        .replace(/‎/g, '')
+        .trim();
+}
 
-    <script>
+function copyText(element, text) {
+    navigator.clipboard.writeText(text);
 
-        function formatEntries() {
+    element.classList.add('copied');
 
-            const raw = document.getElementById("input").value;
+    setTimeout(() => {
+        element.classList.remove('copied');
+    }, 600);
+}
 
-            const lines = raw
-                .split("\n")
-                .map(x => x.trim())
-                .filter(x => x);
+function makeCopyBox(label, value) {
+    return `
+        <div class="field">
+            <div class="label">${label}</div>
+            <div class="copybox" onclick="copyText(this, ${JSON.stringify(value)})">
+                ${value || '-'}
+            </div>
+        </div>
+    `;
+}
 
-            // NAME
-            let name = "";
+function formatEntries() {
 
-            for (const line of lines) {
+    const raw = document.getElementById('input').value;
 
-                if (
-                    /^[A-Z ]+$/.test(line) &&
-                    !line.includes("WHATSAPP") &&
-                    line.split(" ").length >= 2
-                ) {
-                    name = line;
-                    break;
-                }
-            }
+    const lines = raw
+        .split('\n')
+        .map(cleanLine)
+        .filter(x => x !== '');
 
-            // IC
-            let ic = "";
-            let icIndex = -1;
+    const entries = [];
+    let currentEntry = [];
 
-            lines.forEach((line, index) => {
+    for (const line of lines) {
 
-                if (/^\d{12}$/.test(line)) {
-                    ic = line;
-                    icIndex = index;
-                }
-            });
+        currentEntry.push(line);
 
-            // ADDRESS
-            let addressParts = [];
+        if (line.includes('PR/')) {
+            entries.push(currentEntry);
+            currentEntry = [];
+        }
+    }
 
-            for (let i = icIndex + 1; i < lines.length; i++) {
+    let html = '';
 
-                const line = lines[i];
+    entries.forEach((entryLines, index) => {
 
-                if (line.toUpperCase().includes("SDN BHD"))
-                    break;
+        // NAME
+        let name = '';
 
-                if (line === "-")
-                    continue;
+        const firstLine = entryLines[0] || '';
 
-                addressParts.push(line);
-            }
+        const nameMatch = firstLine.match(/\d{2}:\d{2}:\d{2}\s+(.*?)\s+TMF/i);
 
-            let address = addressParts.join(", ");
-
-            address = address
-                .replace(/,\s*,+/g, ",")
-                .replace(/\s+/g, " ")
-                .trim();
-
-            // MEDICINE
-            let medicine = "";
-
-            for (let i = lines.length - 1; i >= 0; i--) {
-
-                if (lines[i].toUpperCase().includes("MG")) {
-                    medicine = lines[i];
-                    break;
-                }
-            }
-
-            const formatted =
-                `${name} || ${address} || ${ic} || ${medicine}`;
-
-            document.getElementById("output").innerText = formatted;
+        if (nameMatch) {
+            name = nameMatch[1].trim();
         }
 
-        function copyOutput() {
+        // IDENTIFICATION
+        let identification = '';
 
-            const text =
-                document.getElementById("output").innerText;
-
-            navigator.clipboard.writeText(text);
-
-            alert("Copied!");
+        if (entryLines[3]) {
+            identification = entryLines[3]
+                .replace(/[^\d]/g, '');
         }
 
-    </script>
+        // ADDRESS
+        let addressLines = entryLines.slice(6, 19);
+
+        addressLines = addressLines
+            .map(x => x.trim())
+            .filter(x => x !== '-')
+            .filter(x => x !== '');
+
+        let address = addressLines.join(', ');
+
+        address = address
+            .replace(/,\s*,+/g, ',')
+            .replace(/\s+/g, ' ')
+            .trim();
+
+        // MED
+        let med = '';
+
+        for (const line of entryLines) {
+
+            if (
+                line.includes('ORIGINAL MED') ||
+                line.includes('GENERIC MED')
+            ) {
+
+                const medMatch = line.match(/\((.*?)\)/);
+
+                if (medMatch) {
+                    med = medMatch[1].trim();
+                }
+            }
+        }
+
+        // AMOUNT
+        let amount = '';
+
+        for (let i = 0; i < entryLines.length; i++) {
+
+            const line = entryLines[i];
+
+            if (
+                line.includes('CAPSULE') ||
+                line.includes('TABLET')
+            ) {
+
+                for (let j = i; j < entryLines.length; j++) {
+
+                    const numMatch = entryLines[j].match(/(\d+)\./);
+
+                    if (numMatch) {
+                        amount = numMatch[1];
+                        break;
+                    }
+                }
+            }
+        }
+
+        html += `
+            <div class="entry">
+                <h2>Entry ${index + 1}</h2>
+
+                ${makeCopyBox('NAME', name)}
+                ${makeCopyBox('ADDRESS', address)}
+                ${makeCopyBox('IDENTIFICATION', identification)}
+                ${makeCopyBox('MED', med)}
+                ${makeCopyBox('AMOUNT', amount)}
+            </div>
+        `;
+    });
+
+    document.getElementById('output').innerHTML = html;
+}
+
+</script>
 
 </body>
 </html>
