@@ -219,12 +219,12 @@
             outline: 2px solid #00cc66;
         }
         .copybox.copyperm  {
-            background: #404040;
-            border: 1px solid #575757;
+            background: #404040 !important;
+            border: 1px solid #575757 !important;
         }
 
         .copybox.med-special {
-            background: #3a2a1a;   /* slightly warm dark color */
+            background: #3a2a1a; 
             outline: 1px solid #ffb347;
         }
     
@@ -508,9 +508,8 @@
             navigator.clipboard.writeText(text);
         
             element.classList.add('copied');
-
             element.classList.add('copyperm');
-
+        
             setTimeout(() => {
                 element.classList.remove('copied');
             }, 500);
