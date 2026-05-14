@@ -1,3 +1,4 @@
+15/5/2026
 - Fixed address formatting.
 
 - Changed IDENTIFICATION from numbers only to include letters for passports too.
@@ -17,3 +18,5 @@
 - Changed fonts.
 
 - Added Mobile Compatibility.
+
+- Adjustments on site and changelogs.
