@@ -187,24 +187,39 @@ function formatEntries() {
         // MED
         let med = '';
 
-        for (const line of entryLines) {
+for ( const line of entryLines) {
 
-            if (
-                line.includes('ORIGINAL MED') ||
-                line.includes('GENERIC MED')
-            ) {
+    if (
+        line.includes('ORIGINAL MED') ||
+        line.includes('GENERIC MED')
+    ) {
 
-                const afterMed =
-                    line.split(/ORIGINAL MED|GENERIC MED/)[1] || '';
+        const afterMed =
+            line.split(/ORIGINAL MED|GENERIC MED/)[1] || '';
 
-                const medMatch =
-                    afterMed.match(/\((.*?)\)/);
+        // FIRST: Try brackets
+        const medMatch =
+            afterMed.match(/\((.*?)\)/);
 
-                if (medMatch) {
-                    med = medMatch[1].trim();
-                }
+        if (medMatch) {
+
+            med = medMatch[1].trim();
+
+        } else {
+
+            // FALLBACK:
+            // Get text before CAPSULE/TABLET
+
+            const capsuleMatch =
+                afterMed.match(/([A-Z0-9\s\-\/]+?)\s{2,}(CAPSULE|TABLET)/i);
+
+            if (capsuleMatch) {
+
+                med = capsuleMatch[1].trim();
             }
         }
+    }
+}
 
         // AMOUNT
         let amount = '';
