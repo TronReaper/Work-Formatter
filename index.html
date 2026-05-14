@@ -649,10 +649,28 @@
                 
                 // normalize for checking
                     const lowerLine = afterMedRaw.toLowerCase();
+
+                // ESKETAMINE SPECIAL CASE
+                    const isEsketamineCase =
+                        lowerLine.includes('esketamine');
                 
-                // ------------------------------
-                // 🟡 SPECIAL CASE (XANAX RULE)
-                // ------------------------------
+                    if (isEsketamineCase) {
+                    
+                        // take everything BEFORE BOX
+                        const beforeBox = afterMedRaw.split(/BOX/i)[0] || '';
+                    
+                        // extract column-like value (NASAL SPRAY 28MG)
+                        const parts = beforeBox
+                            .split(/\t|\s{2,}/)
+                            .map(x => x.trim())
+                            .filter(Boolean);
+                    
+                        med = parts[parts.length - 1] || beforeBox.trim();
+                    
+                        break;
+                    }
+                
+                //  XANAX SPECIAL CASE
                     const isXanaxCase =
                         lowerLine.includes('alprazolam') ||
                         lowerLine.includes('apo-alpraz');
@@ -661,7 +679,7 @@
                 
                         // take FULL name after MED (before TAB breaks it later)
                         const fullName = afterMedRaw
-                            .split(/\t|CAPSULE|TABLET/i)[0]
+                            .split(/\t|CAPSULE|TABLET|BOX/i)[0]
                             .replace(/\s+/g, ' ')
                             .trim();
                 
@@ -673,7 +691,7 @@
                 // 🟢 NORMAL CASE
                 // ------------------------------
                     const beforeType =
-                        afterMedRaw.split(/CAPSULE|TABLET/i)[0] || '';
+                        afterMedRaw.split(/CAPSULE|TABLET|BOX/i)[0] || '';
                 
                     const medMatch =
                         beforeType.match(/\(([^)]+)\)/);
