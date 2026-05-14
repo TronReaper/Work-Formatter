@@ -179,7 +179,6 @@ function formatEntries() {
     `;
 
     entries.forEach(entryLines => {
-         const hasMinLines = entryLines.length >= 28;
 
         const hasMedKeyword = entryLines.some(line =>
             line.includes("ORIGINAL MED") ||
