@@ -27,3 +27,5 @@
 - Fixed an issue that couldnt differentiate between the xanax in Alprazolam and Apo-Alpraz.
 
 - Added Copied marks to easily tell which has been copied already.
+
+- Fixed checking for Nasal Spray and amount
