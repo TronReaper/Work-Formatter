@@ -492,11 +492,13 @@
                 .trim();
         }
 
-        function copyText(element, text) {
+        function copyText(element) {
 
+            const text = decodeURIComponent(element.dataset.copy || '');
+        
             navigator.clipboard.writeText(text);
-
-            element.classList.add('copied');
+        
+            element.classList.add('copied-done');
 
             setTimeout(() => {
                 element.classList.remove('copied');
@@ -672,35 +674,40 @@
 
                         <td>
                             <div class="copybox"
-                                onclick="copyText(this, \`${name}\`)">
+                                data-copy="${encodeURIComponent(name)}"
+                                 onclick="copyText(this)">
                                 ${name || '-'}
                             </div>
                         </td>
 
                         <td>
                             <div class="copybox"
-                                onclick="copyText(this, '${address}')">
+                                data-copy="${encodeURIComponent(address)}"
+                                 onclick="copyText(this)">
                                 ${address || '-'}
                             </div>
                         </td>
 
                         <td>
                             <div class="copybox"
-                                onclick="copyText(this, '${identification}')">
+                                data-copy="${encodeURIComponent(identification)}"
+                                 onclick="copyText(this)">
                                 ${identification || '-'}
                             </div>
                         </td>
 
                         <td>
                             <div class="copybox"
-                                onclick="copyText(this, '${med}')">
+                                data-copy="${encodeURIComponent(med)}"
+                                 onclick="copyText(this)">
                                 ${med || '-'}
                             </div>
                         </td>
 
                         <td>
                             <div class="copybox"
-                                onclick="copyText(this, '${amount}')">
+                                data-copy="${encodeURIComponent(amount)}"
+                                 onclick="copyText(this)">
                                 ${amount || '-'}
                             </div>
                         </td>
