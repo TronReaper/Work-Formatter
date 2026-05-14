@@ -76,6 +76,8 @@
 
 <body>
 
+<div id="lastUpdated" style="margin: 10px 0; color: #aaa; font-size: 14px;"></div>
+
 <h1>Work Formatter</h1>
 
 <textarea id="input" placeholder="Paste entries here..."></textarea>
@@ -89,6 +91,15 @@
 <div id="output"></div>
 
 <script>
+function showLastUpdated() {
+
+    const lastUpdated = new Date(document.lastModified);
+
+    document.getElementById("lastUpdated").innerText =
+        "Last updated: " + lastUpdated.toLocaleString();
+}
+
+showLastUpdated();
 
 function cleanLine(line) {
     return line
