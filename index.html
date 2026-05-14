@@ -79,16 +79,6 @@
 <div id="lastUpdated" style="margin: 10px 0; color: #aaa; font-size: 14px;"></div>
 
 <h1>Work Formatter</h1>
-    
-<div id="errorBox"
-     style="display:none;
-            background:#ff3b3b;
-            color:white;
-            padding:10px;
-            margin:10px 0;
-            border-radius:8px;
-            font-weight:bold;">
-</div>
 
 <textarea id="input" placeholder="Paste entries here..."></textarea>
 
@@ -110,18 +100,6 @@ function showLastUpdated() {
 }
 
 showLastUpdated();
-
-function showError(msg) {
-
-    const box = document.getElementById("errorBox");
-
-    box.innerText = msg;
-    box.style.display = "block";
-
-    setTimeout(() => {
-        box.style.display = "none";
-    }, 5000);
-}
 
 function cleanLine(line) {
     return line
@@ -179,23 +157,6 @@ function formatEntries() {
     `;
 
     entries.forEach(entryLines => {
-
-        const hasMedKeyword = entryLines.some(line =>
-            line.includes("ORIGINAL MED") ||
-            line.includes("GENERIC MED")
-        );
-
-const hasCapsuleOrTablet = entryLines.some(line =>
-    line.includes("CAPSULE") ||
-    line.includes("TABLET")
-);
-
-if (!hasMinLines || !hasMedKeyword || !hasCapsuleOrTablet) {
-
-    showError("Invalid entry");
-
-    return; // skip this entry
-}
 
         // NAME
         let name = '';
