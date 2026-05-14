@@ -218,6 +218,11 @@
         .copied {
             outline: 2px solid #00cc66;
         }
+        .copybox.copyperm  {
+            background: #1f3a2a;
+            border: 1px solid #00cc66;
+            color: #444444;
+        }
     
         /* MODAL */
     
@@ -499,6 +504,8 @@
             navigator.clipboard.writeText(text);
         
             element.classList.add('copied');
+
+            element.classList.add('copyperm');
 
             setTimeout(() => {
                 element.classList.remove('copied');
