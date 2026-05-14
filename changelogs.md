@@ -1,4 +1,4 @@
-15/5/2026
+14/5/2026
 - Fixed address formatting.
 
 - Changed IDENTIFICATION from numbers only to include letters for passports too.
@@ -20,3 +20,10 @@
 - Added Mobile Compatibility.
 
 - Adjustments on site and changelogs.
+
+15/5/2026
+- Added Highlight on Blue file entries.
+
+- Fixed an issue that couldnt differentiate between the xanax in Alprazolam and Apo-Alpraz.
+
+- Added Copied marks to easily tell which has been copied already.
