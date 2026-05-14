@@ -37,42 +37,43 @@
             cursor: pointer;
         }
 
-        .entry {
-            background: #1e1e1e;
-            border: 1px solid #444;
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 20px;
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 25px;
         }
 
-        .field {
-            margin-bottom: 12px;
+        th {
+            background: #222;
+            border: 1px solid #555;
+            padding: 12px;
         }
 
-        .label {
-            font-weight: bold;
-            margin-bottom: 5px;
+        td {
+            border: 1px solid #555;
+            padding: 10px;
+            vertical-align: top;
         }
 
         .copybox {
             background: #2a2a2a;
-            border: 1px solid #555;
+            padding: 8px;
             border-radius: 6px;
-            padding: 10px;
             cursor: pointer;
             transition: 0.2s;
             word-break: break-word;
         }
 
         .copybox:hover {
-            background: #383838;
+            background: #3a3a3a;
         }
 
         .copied {
-            border-color: #00cc66;
+            outline: 2px solid #00cc66;
         }
     </style>
 </head>
+
 <body>
 
 <h1>Medical Entry Formatter</h1>
@@ -80,7 +81,10 @@
 <textarea id="input" placeholder="Paste entries here..."></textarea>
 
 <br>
-<button onclick="formatEntries()">Format Entries</button>
+
+<button onclick="formatEntries()">
+    Format Entries
+</button>
 
 <div id="output"></div>
 
@@ -93,24 +97,14 @@ function cleanLine(line) {
 }
 
 function copyText(element, text) {
+
     navigator.clipboard.writeText(text);
 
     element.classList.add('copied');
 
     setTimeout(() => {
         element.classList.remove('copied');
-    }, 600);
-}
-
-function makeCopyBox(label, value) {
-    return `
-        <div class="field">
-            <div class="label">${label}</div>
-            <div class="copybox" onclick="copyText(this, ${JSON.stringify(value)})">
-                ${value || '-'}
-            </div>
-        </div>
-    `;
+    }, 500);
 }
 
 function formatEntries() {
@@ -123,6 +117,7 @@ function formatEntries() {
         .filter(x => x !== '');
 
     const entries = [];
+
     let currentEntry = [];
 
     for (const line of lines) {
@@ -130,21 +125,36 @@ function formatEntries() {
         currentEntry.push(line);
 
         if (line.includes('PR/')) {
+
             entries.push(currentEntry);
+
             currentEntry = [];
         }
     }
 
-    let html = '';
+    let html = `
+        <table>
+            <thead>
+                <tr>
+                    <th>NAME</th>
+                    <th>ADDRESS</th>
+                    <th>IDENTIFICATION</th>
+                    <th>MED</th>
+                    <th>AMOUNT</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
 
-    entries.forEach((entryLines, index) => {
+    entries.forEach(entryLines => {
 
         // NAME
         let name = '';
 
         const firstLine = entryLines[0] || '';
 
-        const nameMatch = firstLine.match(/\d{2}:\d{2}:\d{2}\s+(.*?)\s+TMF/i);
+        const nameMatch =
+            firstLine.match(/\d{2}:\d{2}:\d{2}\s+(.*?)\s+TMF/i);
 
         if (nameMatch) {
             name = nameMatch[1].trim();
@@ -154,12 +164,14 @@ function formatEntries() {
         let identification = '';
 
         if (entryLines[3]) {
-            identification = entryLines[3]
-                .replace(/[^\d]/g, '');
+
+            identification =
+                entryLines[3].replace(/[^\d]/g, '');
         }
 
         // ADDRESS
-        let addressLines = entryLines.slice(6, 19);
+        let addressLines =
+            entryLines.slice(6, 19);
 
         addressLines = addressLines
             .map(x => x.trim())
@@ -183,7 +195,11 @@ function formatEntries() {
                 line.includes('GENERIC MED')
             ) {
 
-                const medMatch = line.match(/\((.*?)\)/);
+                const afterMed =
+                    line.split(/ORIGINAL MED|GENERIC MED/)[1] || '';
+
+                const medMatch =
+                    afterMed.match(/\((.*?)\)/);
 
                 if (medMatch) {
                     med = medMatch[1].trim();
@@ -205,10 +221,13 @@ function formatEntries() {
 
                 for (let j = i; j < entryLines.length; j++) {
 
-                    const numMatch = entryLines[j].match(/(\d+)\./);
+                    const numMatch =
+                        entryLines[j].match(/(\d+)\./);
 
                     if (numMatch) {
+
                         amount = numMatch[1];
+
                         break;
                     }
                 }
@@ -216,17 +235,51 @@ function formatEntries() {
         }
 
         html += `
-            <div class="entry">
-                <h2>Entry ${index + 1}</h2>
+            <tr>
 
-                ${makeCopyBox('NAME', name)}
-                ${makeCopyBox('ADDRESS', address)}
-                ${makeCopyBox('IDENTIFICATION', identification)}
-                ${makeCopyBox('MED', med)}
-                ${makeCopyBox('AMOUNT', amount)}
-            </div>
+                <td>
+                    <div class="copybox"
+                        onclick="copyText(this, '${name}')">
+                        ${name || '-'}
+                    </div>
+                </td>
+
+                <td>
+                    <div class="copybox"
+                        onclick="copyText(this, '${address}')">
+                        ${address || '-'}
+                    </div>
+                </td>
+
+                <td>
+                    <div class="copybox"
+                        onclick="copyText(this, '${identification}')">
+                        ${identification || '-'}
+                    </div>
+                </td>
+
+                <td>
+                    <div class="copybox"
+                        onclick="copyText(this, '${med}')">
+                        ${med || '-'}
+                    </div>
+                </td>
+
+                <td>
+                    <div class="copybox"
+                        onclick="copyText(this, '${amount}')">
+                        ${amount || '-'}
+                    </div>
+                </td>
+
+            </tr>
         `;
     });
+
+    html += `
+            </tbody>
+        </table>
+    `;
 
     document.getElementById('output').innerHTML = html;
 }
