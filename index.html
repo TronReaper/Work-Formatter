@@ -167,7 +167,9 @@ function formatEntries() {
             firstLine.match(/\d{2}:\d{2}:\d{2}\s+(.*?)\s+TMF/i);
 
         if (nameMatch) {
-            name = nameMatch[1].trim();
+            name = nameMatch[1]
+                .replace(/\s+\.\s*$/, '')
+                .trim();
         }
 
         // IDENTIFICATION
