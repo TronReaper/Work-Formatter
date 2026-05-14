@@ -222,6 +222,11 @@
             background: #404040;
             border: 1px solid #575757;
         }
+
+        .copybox.med-special {
+            background: #3a2a1a;   /* slightly warm dark color */
+            outline: 1px solid #ffb347;
+        }
     
         /* MODAL */
     
@@ -511,6 +516,23 @@
             }, 500);
         }
 
+        const specialMeds = [
+            "alprazolam",
+            "apo-alpraz",
+            "apo-lorazepam",
+            "asolan",
+            "concerta",
+            "diazepam",
+            "insopin",
+            "medikinet",
+            "nasal spray (esketamine)",
+            "ritalin",
+            "rivopam",
+            "rivotril",
+            "somidem",
+            "stillnox"
+        ];
+
         function formatEntries() {
 
             const raw = document.getElementById('input').value;
@@ -670,7 +692,19 @@
                         }
                     }
                 }
-
+                
+                const normalize = (str) =>
+                    (str || '')
+                        .toLowerCase()
+                        .replace(/\s+/g, ' ')
+                        .trim();
+                
+                const medClean = normalize(med);
+                
+                const isSpecialMed = specialMeds.some(m =>
+                    medClean.includes(normalize(m))
+                );
+                
                 html += `
                     <tr>
 
@@ -703,9 +737,9 @@
                         </td>
 
                         <td>
-                            <div class="copybox"
+                            <div class="copybox med-box ${isSpecialMed ? 'med-special' : ''}"
                                 data-copy="${encodeURIComponent(med)}"
-                                 onclick="copyText(this)">
+                                onclick="copyText(this)">
                                 ${med || '-'}
                             </div>
                         </td>
