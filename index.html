@@ -198,7 +198,7 @@ function formatEntries() {
         // MED
         let med = '';
 
-for ( const line of entryLines) {
+for (const line of entryLines) {
 
     if (
         line.includes('ORIGINAL MED') ||
@@ -208,9 +208,13 @@ for ( const line of entryLines) {
         const afterMed =
             line.split(/ORIGINAL MED|GENERIC MED/)[1] || '';
 
-        // FIRST: Try brackets
+        // STEP 1: cut everything AFTER CAPSULE/TABLET
+        const beforeType =
+            afterMed.split(/CAPSULE|TABLET/i)[0] || '';
+
+        // STEP 2: try brackets ONLY in that safe zone
         const medMatch =
-            afterMed.match(/\((.*?)\)/);
+            beforeType.match(/\(([^)]+)\)/);
 
         if (medMatch) {
 
@@ -218,16 +222,16 @@ for ( const line of entryLines) {
 
         } else {
 
-            // FALLBACK:
-            // Get text before CAPSULE/TABLET
+            // STEP 3: fallback (no brackets)
+            // take last meaningful text chunk before CAPSULE/TABLET
 
-            const capsuleMatch =
-                afterMed.match(/([A-Z0-9\s\-\/]+?)\s{2,}(CAPSULE|TABLET)/i);
+            const fallback =
+                beforeType
+                    .split(/\s{2,}|\t+/)   // split by big spacing
+                    .map(x => x.trim())
+                    .filter(x => x);
 
-            if (capsuleMatch) {
-
-                med = capsuleMatch[1].trim();
-            }
+            med = fallback[fallback.length - 1] || '';
         }
     }
 }
