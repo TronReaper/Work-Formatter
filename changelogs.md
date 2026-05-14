@@ -13,3 +13,7 @@
 - Added Time Format.
 
 - Fixed Time Format.
+
+- Changed fonts.
+
+- Added Mobile Compatibility.
