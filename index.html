@@ -165,7 +165,7 @@ function formatEntries() {
         if (entryLines[3]) {
 
             identification =
-                entryLines[3].replace(/[^\d]/g, '');
+                entryLines[3].replace(/[^a-zA-Z0-9-]/g, '');
         }
 
         // ADDRESS
