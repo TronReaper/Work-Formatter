@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Medical Formatter</title>
+    <title>Work Formatter</title>
 
     <style>
         body {
@@ -76,7 +76,7 @@
 
 <body>
 
-<h1>Medical Entry Formatter</h1>
+<h1>Work Formatter</h1>
 
 <textarea id="input" placeholder="Paste entries here..."></textarea>
 
@@ -114,7 +114,6 @@ function formatEntries() {
     const lines = raw
         .split('\n')
         .map(cleanLine)
-        .filter(x => x !== '');
 
     const entries = [];
 
