@@ -586,6 +586,8 @@
 
             const raw = document.getElementById('input').value;
 
+            const raw2 = document.getElementById('input2').value;
+
             const lines = raw
                 .split('\n')
                 .map(cleanLine);
@@ -606,12 +608,44 @@
                 }
             }
 
+            // SECOND BOX PARSING
+
+            const secondLines = raw2
+                .split('\n')
+                .map(cleanLine);
+            
+            const secondEntries = [];
+            
+            let currentSecondEntry = [];
+            
+            for (const line of secondLines) {
+            
+                const isNewEntry =
+                    line.includes('M (R)') &&
+                    line.includes('THE MIND FACULTY SDN BHD');
+            
+                if (isNewEntry && currentSecondEntry.length > 0) {
+            
+                    secondEntries.push(currentSecondEntry);
+            
+                    currentSecondEntry = [];
+                }
+            
+                currentSecondEntry.push(line);
+            }
+            
+            if (currentSecondEntry.length > 0) {
+            
+                secondEntries.push(currentSecondEntry);
+            }
+
             let html = `
                 <table>
                     <thead>
                         <tr>
                             <th>TIME</th>
                             <th>NAME</th>
+                            <th>INVOICE</th>
                             <th>ADDRESS</th>
                             <th>IDENTIFICATION</th>
                             <th>MED</th>
@@ -799,6 +833,47 @@
                 const isSpecialMed = specialMeds.some(m =>
                     medClean.includes(normalize(m))
                 );
+
+                // INVOICE LOOKUP
+
+                let invoice = '';
+                
+                for (const secondEntry of secondEntries) {
+                
+                    const secondText =
+                        secondEntry.join(' ').toLowerCase();
+                
+                    const medMatch =
+                        secondText.includes(
+                            med.toLowerCase()
+                        );
+                
+                    const nameMatch =
+                        secondText.includes(
+                            name.toLowerCase()
+                        );
+                
+                    if (medMatch && nameMatch) {
+                
+                        const invoiceLine =
+                            secondEntry.find(line =>
+                                line.includes('SO/')
+                            );
+                
+                        if (invoiceLine) {
+                
+                            const invoiceMatch =
+                                invoiceLine.match(/SO\/[\w/]+/);
+                
+                            if (invoiceMatch) {
+                
+                                invoice = invoiceMatch[0];
+                
+                                break;
+                            }
+                        }
+                    }
+                }
                 
                 html += `
                     <tr>
@@ -812,6 +887,14 @@
                                 data-copy="${encodeURIComponent(name)}"
                                  onclick="copyText(this)">
                                 ${name || '-'}
+                            </div>
+                        </td>
+
+                        <td>
+                            <div class="copybox"
+                                data-copy="${encodeURIComponent(invoice)}"
+                                 onclick="copyText(this)">
+                                ${invoice || '-'}
                             </div>
                         </td>
 
