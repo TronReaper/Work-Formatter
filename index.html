@@ -695,8 +695,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     <thead>
                         <tr>
                             <th>TIME</th>
-                            <th>NAME</th>
                             <th>INVOICE</th>
+                            <th>NAME</th>
                             <th>ADDRESS</th>
                             <th>IDENTIFICATION</th>
                             <th>MED</th>
@@ -931,17 +931,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
                         <td>
                             <div class="copybox"
-                                data-copy="${encodeURIComponent(name)}"
-                                 onclick="copyText(this)">
-                                ${name || '-'}
-                            </div>
-                        </td>
-
-                        <td>
-                            <div class="copybox"
                                 data-copy="${encodeURIComponent(invoice)}"
                                  onclick="copyText(this)">
                                 ${invoice || '-'}
+                            </div>
+                        </td>
+                        
+                        <td>
+                            <div class="copybox"
+                                data-copy="${encodeURIComponent(name)}"
+                                 onclick="copyText(this)">
+                                ${name || '-'}
                             </div>
                         </td>
 
