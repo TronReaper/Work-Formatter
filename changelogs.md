@@ -39,4 +39,8 @@
 
 - Fixed Med giving Lemborexant instead of Daylight 5mg.
 
-- Fixed SO giving the same SO/ if the name and med are the same as previous SO. 
+- Fixed SO giving the same SO/ if the name and med are the same as previous SO.
+
+- Fixed not giving SO because of 1-2 second delay in stock and supply tabs.
+
+- Made adjustments to layout to be more visually pleasing. 
