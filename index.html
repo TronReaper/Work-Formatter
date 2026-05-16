@@ -823,14 +823,35 @@ document.addEventListener("DOMContentLoaded", () => {
                     const beforeType =
                         afterMedRaw.split(/CAPSULE|TABLET|BOX/i)[0] || '';
                 
-                    const medMatch =
-                        beforeType.match(/\(([^)]+)\)/);
-                
-                    if (medMatch) {
-                
-                        med = medMatch[1].trim();
-                
-                    } else {
+                    const allBrackets =
+    [...beforeType.matchAll(/\(([^)]+)\)/g)];
+
+if (allBrackets.length > 0) {
+
+    // first detected bracket
+    let detectedMed =
+        allBrackets[0][1].trim();
+
+    // if first bracket is Lemborexant,
+    // use the NEXT bracket instead
+    if (
+        detectedMed.toLowerCase() === "lemborexant" &&
+        allBrackets[1]
+    ) {
+
+        med = allBrackets[1][1].trim();
+
+    } else {
+
+        med = detectedMed;
+    }
+
+} else {
+
+        med = detectedMed;
+    }
+
+} else {
                 
                         const fallback =
                             beforeType
