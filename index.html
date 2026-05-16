@@ -850,36 +850,6 @@
         
             document.getElementById('output').innerHTML = html;
         }
-            // SECOND BOX PARSING
-
-            const secondLines = raw2
-                .split('\n')
-                .map(cleanLine);
-            
-            const secondEntries = [];
-            
-            let currentSecondEntry = [];
-            
-            for (const line of secondLines) {
-            
-                const isNewEntry =
-                    line.includes('M (R)') &&
-                    line.includes('THE MIND FACULTY SDN BHD');
-            
-                if (isNewEntry && currentSecondEntry.length > 0) {
-            
-                    secondEntries.push(currentSecondEntry);
-            
-                    currentSecondEntry = [];
-                }
-            
-                currentSecondEntry.push(line);
-            }
-            
-            if (currentSecondEntry.length > 0) {
-            
-                secondEntries.push(currentSecondEntry);
-            }
 
             let html = `
                 <table>
