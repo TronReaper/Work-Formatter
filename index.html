@@ -920,56 +920,38 @@ let invoice = '';
 
 for (const secondEntry of secondEntries) {
 
-    const secondText = secondEntry.join(' ').toLowerCase();
+    let foundMed = false;
+    let foundName = false;
+    let entryTime = '';
+    let localInvoice = '';
 
-    const medMatch =
-        secondText.includes(med.toLowerCase());
+    
 
-    const nameMatch =
-        secondText.includes(name.toLowerCase());
+    for (let i = 0; i < secondEntry.length; i++) {
 
-    // extract time from second entry
-    let secondTime = '';
+    const line = secondEntry[i];
+    const lower = line.toLowerCase();
 
-    for (const line of secondEntry) {
+    const tMatch = line.match(/\b(\d{2}:\d{2}:\d{2})\b/);
+    if (tMatch) entryTime = tMatch[1];
 
-        const timeMatch =
-            line.match(/\b(\d{2}:\d{2}:\d{2})\b/);
+    if (!foundMed && lower.includes(med.toLowerCase())) {
+        foundMed = true;
+    }
 
-        if (timeMatch) {
+    if (foundMed && !foundName && lower.includes(name.toLowerCase())) {
+        foundName = true;
+    }
 
-            secondTime = timeMatch[1];
+    if (foundName && entryTime === time) {
+
+        const invoiceMatch = line.match(/SO\/[\w/]+/);
+
+        if (invoiceMatch) {
+            invoice = localInvoice;
             break;
         }
     }
-
-    const timeMatchExact =
-        secondTime === time;
-
-    if (medMatch && nameMatch && timeMatchExact) {
-
-        // find invoice AFTER name line
-        const nameIndex = secondEntry.findIndex(line =>
-            line.toLowerCase().includes(name.toLowerCase())
-        );
-
-        if (nameIndex === -1) continue;
-
-        for (let i = nameIndex; i < secondEntry.length; i++) {
-
-            const line = secondEntry[i];
-
-            const invoiceMatch =
-                line.match(/SO\/[\w/]+/);
-
-            if (invoiceMatch) {
-
-                invoice = invoiceMatch[0];
-                break;
-            }
-        }
-
-        break;
     }
 }
                 
