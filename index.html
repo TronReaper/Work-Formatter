@@ -583,36 +583,35 @@
         ];
 
         function formatEntries() {
-        
+
             const raw = document.getElementById('input').value;
             const raw2 = document.getElementById('input2').value;
         
-            const lines = raw
-                .split('\n')
-                .map(cleanLine);
+            const clean = (t) => (t || '').replace(/‎/g, '').trim();
+        
+            // =========================
+            // MAIN ENTRIES
+            // =========================
+            const lines = raw.split('\n').map(clean);
         
             const entries = [];
-        
             let currentEntry = [];
         
             for (const line of lines) {
-        
                 currentEntry.push(line);
         
                 if (line.includes('PR/')) {
-        
                     entries.push(currentEntry);
                     currentEntry = [];
                 }
             }
         
-            // SECOND BOX PARSING
-            const secondLines = raw2
-                .split('\n')
-                .map(cleanLine);
+            // =========================
+            // SECOND BOX ENTRIES
+            // =========================
+            const secondLines = raw2.split('\n').map(clean);
         
             const secondEntries = [];
-        
             let currentSecondEntry = [];
         
             for (const line of secondLines) {
@@ -622,7 +621,6 @@
                     line.includes('THE MIND FACULTY SDN BHD');
         
                 if (isNewEntry && currentSecondEntry.length > 0) {
-        
                     secondEntries.push(currentSecondEntry);
                     currentSecondEntry = [];
                 }
@@ -630,12 +628,12 @@
                 currentSecondEntry.push(line);
             }
         
-            if (currentSecondEntry.length > 0) {
+            if (currentSecondEntry.length) {
                 secondEntries.push(currentSecondEntry);
             }
         
             // =========================
-            // ✅ STEP 1: PRE-SCAN (IMPORTANT FIX)
+            // PRE-SCAN (CHECK IF ANY INVOICE EXISTS)
             // =========================
             let hasAnyInvoice = false;
         
@@ -649,82 +647,48 @@
                 const nameMatch =
                     firstLine.match(/\d{2}:\d{2}:\d{2}\s+(.*?)\s+TMF/i);
         
-                if (nameMatch) {
-                    name = nameMatch[1].trim();
-                }
+                if (nameMatch) name = nameMatch[1].trim();
         
-                // MED
                 for (const line of entryLines) {
         
                     const match = line.match(/(ORIGINAL MED|GENERIC MED)\s+(.*)/i);
                     if (!match) continue;
         
-                    const afterMedRaw = match[2] || '';
-                    const lowerLine = afterMedRaw.toLowerCase();
+                    const after = match[2] || '';
+                    const lower = after.toLowerCase();
         
-                    const isEsketamineCase =
-                        lowerLine.includes('esketamine');
-        
-                    if (isEsketamineCase) {
-                        const beforeBox = afterMedRaw.split(/BOX/i)[0] || '';
-                        med = beforeBox.trim();
-                        break;
-                    }
-        
-                    const isXanaxCase =
-                        lowerLine.includes('alprazolam') ||
-                        lowerLine.includes('apo-alpraz');
-        
-                    if (isXanaxCase) {
-                        const fullName = afterMedRaw
-                            .split(/\t|CAPSULE|TABLET|BOX/i)[0]
-                            .replace(/\s+/g, ' ')
-                            .trim();
-        
-                        med = fullName;
-                        break;
-                    }
-        
-                    const beforeType =
-                        afterMedRaw.split(/CAPSULE|TABLET|BOX/i)[0] || '';
-        
-                    const medMatch =
-                        beforeType.match(/\(([^)]+)\)/);
-        
-                    if (medMatch) {
-                        med = medMatch[1].trim();
+                    if (lower.includes('esketamine')) {
+                        med = after.split(/BOX/i)[0].trim();
+                    } else if (
+                        lower.includes('alprazolam') ||
+                        lower.includes('apo-alpraz')
+                    ) {
+                        med = after.split(/\t|CAPSULE|TABLET|BOX/i)[0].trim();
                     } else {
-                        const fallback =
-                            beforeType
-                                .split(/\s{2,}|\t+/)
-                                .map(x => x.trim())
-                                .filter(Boolean);
-        
-                        med = fallback[fallback.length - 1] || '';
+                        const before = after.split(/CAPSULE|TABLET|BOX/i)[0] || '';
+                        const mm = before.match(/\(([^)]+)\)/);
+                        med = mm ? mm[1].trim() : before.trim();
                     }
         
                     break;
                 }
         
-                // INVOICE CHECK (ONLY PRE-SCAN)
                 for (const secondEntry of secondEntries) {
         
-                    const secondText = secondEntry.join(' ').toLowerCase();
+                    const text = secondEntry.join(' ').toLowerCase();
         
-                    const medMatch = secondText.includes(med.toLowerCase());
-                    const nameMatch = secondText.includes(name.toLowerCase());
+                    if (!text.includes(name.toLowerCase()) ||
+                        !text.includes(med.toLowerCase())
+                    ) continue;
         
-                    if (!medMatch || !nameMatch) continue;
-        
-                    const nameIndex = secondEntry.findIndex(line =>
-                        line.toLowerCase().includes(name.toLowerCase())
+                    const idx = secondEntry.findIndex(l =>
+                        l.toLowerCase().includes(name.toLowerCase())
                     );
         
-                    if (nameIndex === -1) continue;
+                    if (idx === -1) continue;
         
-                    for (let i = nameIndex; i < secondEntry.length; i++) {
-        
-                        if (secondEntry[i].match(/SO\/[\w/]+/)) {
+                    for (let i = idx; i < secondEntry.length; i++) {
+                        if (/SO\/[\w/]+/.test(secondEntry[i])) {
                             hasAnyInvoice = true;
                             break;
                         }
@@ -737,7 +701,7 @@
             }
         
             // =========================
-            // STEP 2: BUILD TABLE
+            // BUILD TABLE
             // =========================
             let html = `
                 <table>
@@ -756,7 +720,7 @@
             `;
         
             // =========================
-            // STEP 3: NORMAL RENDER
+            // RENDER
             // =========================
             entries.forEach(entryLines => {
         
@@ -764,12 +728,11 @@
                 let name = '';
                 let med = '';
                 let invoice = '';
+                let identification = '';
         
                 const firstLine = entryLines[0] || '';
         
-                const timeMatch =
-                    firstLine.match(/\b(\d{2}:\d{2}:\d{2})\b/);
-        
+                const timeMatch = firstLine.match(/\b(\d{2}:\d{2}:\d{2})\b/);
                 if (timeMatch) time = timeMatch[1];
         
                 const nameMatch =
@@ -777,59 +740,68 @@
         
                 if (nameMatch) name = nameMatch[1].trim();
         
-                let identification = '';
-        
                 if (entryLines[3]) {
                     identification =
                         entryLines[3].replace(/[^a-zA-Z0-9-]/g, '');
                 }
         
-                let addressLines =
-                    entryLines.slice(6, 19);
-        
-                let address = addressLines
-                    .map(x => x.trim())
-                    .filter(x => x !== '-')
-                    .filter(Boolean)
+                let address = entryLines
+                    .slice(6, 19)
+                    .map(clean)
+                    .filter(x => x && x !== '-')
                     .join(', ')
                     .replace(/\s+/g, ' ')
                     .trim();
         
-                // MED (same logic as before)
+                // MED
                 for (const line of entryLines) {
         
                     const match = line.match(/(ORIGINAL MED|GENERIC MED)\s+(.*)/i);
                     if (!match) continue;
         
-                    const afterMedRaw = match[2] || '';
-                    med = afterMedRaw.split(/CAPSULE|TABLET|BOX/i)[0].trim();
+                    const after = match[2] || '';
+                    const lower = after.toLowerCase();
+        
+                    if (lower.includes('esketamine')) {
+                        med = after.split(/BOX/i)[0].trim();
+                    } else if (
+                        lower.includes('alprazolam') ||
+                        lower.includes('apo-alpraz')
+                    ) {
+                        med = after.split(/\t|CAPSULE|TABLET|BOX/i)[0].trim();
+                    } else {
+                        const before = after.split(/CAPSULE|TABLET|BOX/i)[0] || '';
+                        const mm = before.match(/\(([^)]+)\)/);
+                        med = mm ? mm[1].trim() : before.trim();
+                    }
+        
                     break;
                 }
         
-                // INVOICE (real lookup)
-                for (const secondEntry of secondEntries) {
+                // INVOICE (AFTER NAME ONLY)
+                if (hasAnyInvoice) {
         
-                    const secondText = secondEntry.join(' ').toLowerCase();
+                    for (const secondEntry of secondEntries) {
         
-                    if (
-                        secondText.includes(name.toLowerCase()) &&
-                        secondText.includes(med.toLowerCase())
-                    ) {
+                        const text = secondEntry.join(' ').toLowerCase();
         
-                        const nameIndex = secondEntry.findIndex(line =>
-                            line.toLowerCase().includes(name.toLowerCase())
+                        if (!text.includes(name.toLowerCase()) ||
+                            !text.includes(med.toLowerCase())
+                        ) continue;
+        
+                        const idx = secondEntry.findIndex(l =>
+                            l.toLowerCase().includes(name.toLowerCase())
                         );
         
-                        if (nameIndex !== -1) {
+                        if (idx === -1) continue;
         
-                            for (let i = nameIndex; i < secondEntry.length; i++) {
+                        for (let i = idx; i < secondEntry.length; i++) {
         
-                                const match = secondEntry[i].match(/SO\/[\w/]+/);
+                            const match = secondEntry[i].match(/SO\/[\w/]+/);
         
-                                if (match) {
-                                    invoice = match[0];
-                                    break;
-                                }
+                            if (match) {
+                                invoice = match[0];
+                                break;
                             }
                         }
         
@@ -839,7 +811,6 @@
         
                 html += `
                     <tr>
-        
                         <td>${time || '-'}</td>
         
                         <td>
@@ -857,24 +828,10 @@
                                 onclick="copyText(this)">
                                 ${invoice || '-'}
                             </div>
-                        </td>
-                        ` : ``}
+                        </td>` : ``}
         
-                        <td>
-                            <div class="copybox"
-                                data-copy="${encodeURIComponent(address)}"
-                                onclick="copyText(this)">
-                                ${address || '-'}
-                            </div>
-                        </td>
-        
-                        <td>
-                            <div class="copybox"
-                                data-copy="${encodeURIComponent(identification)}"
-                                onclick="copyText(this)">
-                                ${identification || '-'}
-                            </div>
-                        </td>
+                        <td>${address || '-'}</td>
+                        <td>${identification || '-'}</td>
         
                         <td>
                             <div class="copybox"
@@ -885,15 +842,11 @@
                         </td>
         
                         <td>-</td>
-        
                     </tr>
                 `;
             });
         
-            html += `
-                    </tbody>
-                </table>
-            `;
+            html += `</tbody></table>`;
         
             document.getElementById('output').innerHTML = html;
         }
