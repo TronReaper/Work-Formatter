@@ -917,7 +917,13 @@ break;
                 // INVOICE LOOKUP
 
 let invoice = '';
-
+                
+function timeToSeconds(t) {
+    const [h, m, s] = t.split(':').map(Number);
+    return h * 3600 + m * 60 + s;
+}
+const baseTimeSec = timeToSeconds(time);
+                
 for (const secondEntry of secondEntries) {
 
     let foundMed = false;
@@ -939,14 +945,19 @@ for (const secondEntry of secondEntries) {
             foundName = true;
         }
 
-        if (foundName && lineTime === time) {
+        if (foundName && lineTime) {
 
-            const invoiceMatch = line.match(/SO\/[\w/]+/);
+    const lineTimeSec = timeToSeconds(lineTime);
 
-            if (invoiceMatch) {
-                invoice = invoiceMatch[0];   // ✅ FIXED
-                break;
-            }
+    if (Math.abs(lineTimeSec - baseTimeSec) <= 2) {
+
+        const invoiceMatch = line.match(/SO\/[\w/]+/);
+
+        if (invoiceMatch) {
+            invoice = invoiceMatch[0];
+            break;
+        }
+    }
         }
     }
 
