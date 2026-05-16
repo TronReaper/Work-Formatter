@@ -448,18 +448,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
     input.focus();
 
-    input.addEventListener("keydown", (e) => {
+    function checkCode() {
+        const value = input.value.trim();
 
-        if (e.key === "Enter") {
-
-            const value = input.value.trim();
-
-            if (value === SECRET) {
-                lockscreen.remove(); // fully disappears
-            } else {
-                input.value = ""; // silent fail
-            }
+        if (value === SECRET) {
+            lockscreen.remove();
+        } else {
+            input.value = "";
         }
+    }
+
+    // Desktop Enter key
+    input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+            checkCode();
+        }
+    });
+
+    // Mobile fallback (VERY IMPORTANT)
+    input.addEventListener("keyup", (e) => {
+        if (e.key === "Enter") {
+            checkCode();
+        }
+    });
+
+    // Extra mobile safety: some keyboards don't send Enter properly
+    input.addEventListener("change", () => {
+        // optional: only triggers when user "submits" field
     });
 
 });
