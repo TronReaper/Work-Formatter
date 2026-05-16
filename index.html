@@ -844,18 +844,15 @@ const allBrackets =
 
 if (allBrackets.length > 0) {
 
-    // first detected bracket
     let detectedMed =
         allBrackets[0][1].trim();
 
-    // if first bracket is Lemborexant,
-    // use the NEXT bracket instead
+    // Convert Lemborexant -> DAYVIGO 5MG
     if (
-        detectedMed.toLowerCase() === "LEMBOREXANT" &&
-        allBrackets[1]
+        detectedMed.toLowerCase() === "lemborexant"
     ) {
 
-        med = allBrackets[1][1].trim();
+        med = "DAYVIGO 5MG";
 
     } else {
 
