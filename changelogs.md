@@ -35,4 +35,8 @@
 
 - Added Searching for invoices functions. 
 
-- Fixed invoice checking for the first SO of the entry instead of after the name. 
+- Fixed invoice checking for the first SO of the entry instead of after the name.
+
+- Fixed Med giving Lemborexant instead of Daylight 5mg.
+
+- Fixed SO giving the same SO/ if the name and med are the same as previous SO. 
