@@ -922,37 +922,35 @@ for (const secondEntry of secondEntries) {
 
     let foundMed = false;
     let foundName = false;
-    let entryTime = '';
-    let localInvoice = '';
-
-    
 
     for (let i = 0; i < secondEntry.length; i++) {
 
-    const line = secondEntry[i];
-    const lower = line.toLowerCase();
+        const line = secondEntry[i];
+        const lower = line.toLowerCase();
 
-    const tMatch = line.match(/\b(\d{2}:\d{2}:\d{2})\b/);
-    if (tMatch) entryTime = tMatch[1];
+        const tMatch = line.match(/\b(\d{2}:\d{2}:\d{2})\b/);
+        const lineTime = tMatch ? tMatch[1] : null;
 
-    if (!foundMed && lower.includes(med.toLowerCase())) {
-        foundMed = true;
-    }
+        if (!foundMed && lower.includes(med.toLowerCase())) {
+            foundMed = true;
+        }
 
-    if (foundMed && !foundName && lower.includes(name.toLowerCase())) {
-        foundName = true;
-    }
+        if (foundMed && !foundName && lower.includes(name.toLowerCase())) {
+            foundName = true;
+        }
 
-    if (foundName && entryTime === time) {
+        if (foundName && lineTime === time) {
 
-        const invoiceMatch = line.match(/SO\/[\w/]+/);
+            const invoiceMatch = line.match(/SO\/[\w/]+/);
 
-        if (invoiceMatch) {
-            invoice = localInvoice;
-            break;
+            if (invoiceMatch) {
+                invoice = invoiceMatch[0];   // ✅ FIXED
+                break;
+            }
         }
     }
-    }
+
+    if (invoice) break;
 }
                 
                 html += `
