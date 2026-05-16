@@ -293,9 +293,36 @@
             line-height: 1.6;
             color: #d8d8d8;
         }
-    
+        /*second button*/
+        .hiddenBox {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transform: translateY(-8px);
+            transition:
+                max-height 0.25s ease,
+                opacity 0.2s ease,
+                transform 0.2s ease,
+                margin-top 0.25s ease;
+        }
+        
+        .hiddenBox.show {
+            max-height: 400px;
+            opacity: 1;
+            transform: translateY(0);
+            margin-top: 14px;
+        }
+        
+        .secondaryButton {
+            background: #1d1d1d;
+            color: #f2f2f2;
+            border: 1px solid #303030;
+        }
+        
+        .secondaryButton:hover {
+            background: #252525;
+        }
         /* SCROLLBAR */
-    
         ::-webkit-scrollbar {
             width: 10px;
             height: 10px;
@@ -424,10 +451,23 @@
 
     <textarea id="input" placeholder="Paste entries here..."></textarea>
 
+    <div id="secondBoxWrapper" class="hiddenBox">
+
+        <textarea
+            id="input2"
+            placeholder="Paste extra entries here...">
+        </textarea>
+    
+    </div>
+
     <!-- BUTTONS -->
 
     <div class="buttonRow">
 
+        <button class="mainButton secondaryButton" onclick="toggleSecondBox()">
+            Extra Box
+        </button>
+        
         <button class="mainButton" onclick="formatEntries()">
             Format Entries
         </button>
@@ -513,6 +553,14 @@
             setTimeout(() => {
                 element.classList.remove('copied');
             }, 500);
+        }
+        
+        function toggleSecondBox() {
+
+            const box =
+                document.getElementById('secondBoxWrapper');
+        
+            box.classList.toggle('show');
         }
 
         const specialMeds = [
