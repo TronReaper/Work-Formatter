@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html>
+<div id="lockScreen">
+    <h1>Hello</h1>
 
+    <input id="fakeInput" placeholder="Type anything..." autocomplete="off" />
+</div>
+    
 <head>
     <title>Work Formatter</title>
 
@@ -42,7 +47,33 @@
             margin-bottom: 22px;
             text-align: center;
         }
-    
+    #lockScreen {
+    position: fixed;
+    inset: 0;
+    background: black;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 999999;
+    font-family: 'Inter', sans-serif;
+}
+
+#lockScreen h1 {
+    margin-bottom: 20px;
+}
+
+#fakeInput {
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid #333;
+    background: #111;
+    color: white;
+    outline: none;
+    width: 220px;
+    text-align: center;
+}
         #lastUpdated {
             color: #7d7d7d;
             font-size: 12px;
@@ -480,7 +511,37 @@
     <div id="output"></div>
 
     <script>
+let buffer = "";
 
+const CODE = "BSM321";
+
+document.addEventListener("keydown", (e) => {
+
+    // ignore modifier keys
+    if (e.key.length !== 1) return;
+
+    buffer += e.key.toUpperCase();
+
+    // keep buffer short
+    if (buffer.length > CODE.length) {
+        buffer = buffer.slice(-CODE.length);
+    }
+
+    if (buffer === CODE) {
+        unlockSite();
+    }
+});
+
+function unlockSite() {
+    const lock = document.getElementById("lockScreen");
+
+    lock.style.transition = "opacity 0.3s ease";
+    lock.style.opacity = "0";
+
+    setTimeout(() => {
+        lock.remove();
+    }, 300);
+}
         function showLastUpdated() {
 
             const lastUpdated = new Date(document.lastModified);
