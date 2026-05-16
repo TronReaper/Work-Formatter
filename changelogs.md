@@ -33,4 +33,7 @@
 16/5/2026
 - Added Second box for entries..
 
-- Added Searching for invoices functions
+- Added Searching for invoices functions. 
+
+- Fixed invoice checking for the first SO of the entry
+  instead of after the name. 
