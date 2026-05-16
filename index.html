@@ -837,41 +837,37 @@
                 // INVOICE LOOKUP
 
                 let invoice = '';
-                
+
                 for (const secondEntry of secondEntries) {
                 
-                    const secondText =
-                        secondEntry.join(' ').toLowerCase();
+                    const secondText = secondEntry.join(' ').toLowerCase();
                 
-                    const medMatch =
-                        secondText.includes(
-                            med.toLowerCase()
-                        );
-                
-                    const nameMatch =
-                        secondText.includes(
-                            name.toLowerCase()
-                        );
+                    const medMatch = secondText.includes(med.toLowerCase());
+                    const nameMatch = secondText.includes(name.toLowerCase());
                 
                     if (medMatch && nameMatch) {
                 
-                        const invoiceLine =
-                            secondEntry.find(line =>
-                                line.includes('SO/')
-                            );
+                        // 1. find the index of the NAME line
+                        const nameIndex = secondEntry.findIndex(line =>
+                            line.toLowerCase().includes(name.toLowerCase())
+                        );
                 
-                        if (invoiceLine) {
+                        if (nameIndex === -1) continue;
                 
-                            const invoiceMatch =
-                                invoiceLine.match(/SO\/[\w/]+/);
+                        // 2. only search AFTER the name line
+                        for (let i = nameIndex; i < secondEntry.length; i++) {
+                
+                            const line = secondEntry[i];
+                
+                            const invoiceMatch = line.match(/SO\/[\w/]+/);
                 
                             if (invoiceMatch) {
-                
                                 invoice = invoiceMatch[0];
-                
                                 break;
                             }
                         }
+                
+                        break; // stop once matched entry is found
                     }
                 }
                 
