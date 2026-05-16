@@ -35,5 +35,4 @@
 
 - Added Searching for invoices functions. 
 
-- Fixed invoice checking for the first SO of the entry
-  instead of after the name. 
+- Fixed invoice checking for the first SO of the entry instead of after the name. 
