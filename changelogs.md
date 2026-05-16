@@ -29,3 +29,8 @@
 - Added Copied marks to easily tell which has been copied already.
 
 - Fixed checking for Nasal Spray and amount
+
+16/5/2026
+- Added Second box for entries..
+
+- Added Searching for invoices functions
