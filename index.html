@@ -175,13 +175,18 @@
         td {
             background: #131313;
             border-bottom: 1px solid #232323;
-            padding: 10px;
-            vertical-align: top;
+            padding: 14px 10px;
+            vertical-align: middle;
             font-size: 13px;
         }
     
         tr:hover td {
             background: #171717;
+        }
+        
+        td:nth-child(2),
+        td:nth-child(5) {
+            white-space: nowrap;
         }
     
         /* TIME COLUMN */
@@ -203,6 +208,13 @@
             cursor: pointer;
             transition: 0.15s ease;
             word-break: break-word;
+        }
+        
+        td:nth-child(2) .copybox,
+        td:nth-child(5) .copybox {
+            white-space: nowrap;
+            width: 100%;
+            display: inline-block;
         }
     
         .copybox:hover {
