@@ -916,40 +916,62 @@ break;
 
                 // INVOICE LOOKUP
 
-                let invoice = '';
+let invoice = '';
 
-                for (const secondEntry of secondEntries) {
-                
-                    const secondText = secondEntry.join(' ').toLowerCase();
-                
-                    const medMatch = secondText.includes(med.toLowerCase());
-                    const nameMatch = secondText.includes(name.toLowerCase());
-                
-                    if (medMatch && nameMatch) {
-                
-                        // 1. find the index of the NAME line
-                        const nameIndex = secondEntry.findIndex(line =>
-                            line.toLowerCase().includes(name.toLowerCase())
-                        );
-                
-                        if (nameIndex === -1) continue;
-                
-                        // 2. only search AFTER the name line
-                        for (let i = nameIndex; i < secondEntry.length; i++) {
-                
-                            const line = secondEntry[i];
-                
-                            const invoiceMatch = line.match(/SO\/[\w/]+/);
-                
-                            if (invoiceMatch) {
-                                invoice = invoiceMatch[0];
-                                break;
-                            }
-                        }
-                
-                        break; // stop once matched entry is found
-                    }
-                }
+for (const secondEntry of secondEntries) {
+
+    const secondText = secondEntry.join(' ').toLowerCase();
+
+    const medMatch =
+        secondText.includes(med.toLowerCase());
+
+    const nameMatch =
+        secondText.includes(name.toLowerCase());
+
+    // extract time from second entry
+    let secondTime = '';
+
+    for (const line of secondEntry) {
+
+        const timeMatch =
+            line.match(/\b(\d{2}:\d{2}:\d{2})\b/);
+
+        if (timeMatch) {
+
+            secondTime = timeMatch[1];
+            break;
+        }
+    }
+
+    const timeMatchExact =
+        secondTime === time;
+
+    if (medMatch && nameMatch && timeMatchExact) {
+
+        // find invoice AFTER name line
+        const nameIndex = secondEntry.findIndex(line =>
+            line.toLowerCase().includes(name.toLowerCase())
+        );
+
+        if (nameIndex === -1) continue;
+
+        for (let i = nameIndex; i < secondEntry.length; i++) {
+
+            const line = secondEntry[i];
+
+            const invoiceMatch =
+                line.match(/SO\/[\w/]+/);
+
+            if (invoiceMatch) {
+
+                invoice = invoiceMatch[0];
+                break;
+            }
+        }
+
+        break;
+    }
+}
                 
                 html += `
                     <tr>
