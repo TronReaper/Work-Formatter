@@ -645,7 +645,7 @@
                         <tr>
                             <th>TIME</th>
                             <th>NAME</th>
-                            <th>INVOICE</th>
+                            ${hasAnyInvoice ? `<th>INVOICE</th>` : ``}
                             <th>ADDRESS</th>
                             <th>IDENTIFICATION</th>
                             <th>MED</th>
@@ -654,6 +654,8 @@
                     </thead>
                     <tbody>
             `;
+
+            let hasAnyInvoice = false;
 
             entries.forEach(entryLines => {
 
@@ -863,6 +865,7 @@
                 
                             if (invoiceMatch) {
                                 invoice = invoiceMatch[0];
+                                hasAnyInvoice = true;
                                 break;
                             }
                         }
