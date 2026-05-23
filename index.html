@@ -959,6 +959,8 @@ break;
 
 
                 let invoice = '';
+                let stock = '';
+                
 
                 function timeToSeconds(t) {
     const [h, m, s] = t.split(':').map(Number);
@@ -1001,27 +1003,20 @@ for (const secondEntry of secondEntries) {
 
             let stock = '';
 
-// ---------------- STOCK (FINAL FIX) ----------------
+// get all .00 values in the line
+const matches = [...line.matchAll(/(\d+)\.00/g)];
+const values = matches.map(m => m[1]);
 
-// grab all numbers like 0.00 / 7.00 / 918.00
-const matches = [...line.matchAll(/(\d+)\.00/g)]
-    .map(m => m[1]);
+// find where AMOUNT is
+const amtIndex = values.indexOf(amount);
 
-// normalize amount safely
-const amt = parseInt(amount, 10);
-
-// convert all to numbers for reliable matching
-const nums = matches.map(n => parseInt(n, 10));
-
-// find index of amount
-const index = nums.indexOf(amt);
-
-// stock is next number after amount
-if (index !== -1 && nums[index + 1] !== undefined) {
-    stock = nums[index + 1].toString();
-} else {
-    stock = '';
+// stock is next value after amount
+if (amtIndex !== -1 && values[amtIndex + 1]) {
+    stock = values[amtIndex + 1];
 }
+
+            break;
+        }
     }
         }
     }
