@@ -873,45 +873,45 @@ document.addEventListener("DOMContentLoaded", () => {
                         break;
                     }
                 
-                // ------------------------------
-// 🟢 NORMAL CASE
-// ------------------------------
-
-const beforeType =
-    afterMedRaw.split(/CAPSULE|TABLET|BOX/i)[0] || '';
-
-const allBrackets =
-    [...beforeType.matchAll(/\(([^)]+)\)/g)];
-
-if (allBrackets.length > 0) {
-
-    let detectedMed =
-        allBrackets[0][1].trim();
-
-    // Convert Lemborexant -> DAYVIGO 5MG
-    if (
-        detectedMed.toLowerCase() === "lemborexant"
-    ) {
-
-        med = "DAYVIGO 5MG";
-
-    } else {
-
-        med = detectedMed;
-    }
-
-} else {
-
-    const fallback =
-        beforeType
-            .split(/\s{2,}|\t+/)
-            .map(x => x.trim())
-            .filter(x => x);
-
-    med = fallback[fallback.length - 1] || '';
-}
-
-break;
+                    // ------------------------------
+                    // 🟢 NORMAL CASE
+                    // ------------------------------
+                    
+                    const beforeType =
+                        afterMedRaw.split(/CAPSULE|TABLET|BOX/i)[0] || '';
+                    
+                    const allBrackets =
+                        [...beforeType.matchAll(/\(([^)]+)\)/g)];
+                    
+                    if (allBrackets.length > 0) {
+                    
+                        let detectedMed =
+                            allBrackets[0][1].trim();
+                    
+                        // Convert Lemborexant -> DAYVIGO 5MG
+                        if (
+                            detectedMed.toLowerCase() === "lemborexant"
+                        ) {
+                    
+                            med = "DAYVIGO 5MG";
+                    
+                        } else {
+                    
+                            med = detectedMed;
+                        }
+                    
+                    } else {
+                    
+                        const fallback =
+                            beforeType
+                                .split(/\s{2,}|\t+/)
+                                .map(x => x.trim())
+                                .filter(x => x);
+                    
+                        med = fallback[fallback.length - 1] || '';
+                    }
+                
+                break;
                 }
 
                 // AMOUNT
@@ -963,61 +963,104 @@ break;
                 
 
                 function timeToSeconds(t) {
-    const [h, m, s] = t.split(':').map(Number);
-    return h * 3600 + m * 60 + s;
-}
-const baseTimeSec = timeToSeconds(time);
-                
-for (const secondEntry of secondEntries) {
+                    const [h, m, s] = t.split(':').map(Number);
+                    return h * 3600 + m * 60 + s;
+                }
+        const baseTimeSec = timeToSeconds(time);
+                        
+        for (const secondEntry of secondEntries) {
+        
+            let foundMed = false;
+            let foundName = false;
+        
+            for (let i = 0; i < secondEntry.length; i++) {
+        
+                const line = secondEntry[i];
+                const lower = line.toLowerCase();
+        
+                const tMatch = line.match(/\b(\d{2}:\d{2}:\d{2})\b/);
+                const lineTime = tMatch ? tMatch[1] : null;
+        
+                if (!foundMed && lower.includes(med.toLowerCase())) {
+                    foundMed = true;
+                }
+        
+                if (foundMed && !foundName && lower.includes(name.toLowerCase())) {
+                    foundName = true;
+                }
+        
+                if (foundName && lineTime) {
+        
+            const lineTimeSec = timeToSeconds(lineTime);
+        
+            if (Math.abs(lineTimeSec - baseTimeSec) <= 2) {
+        
+                const invoiceMatch = line.match(/SO\/[\w/]+/);
+        
+                if (invoiceMatch) {
+        
+                     invoice = invoiceMatch[0];
 
-    let foundMed = false;
-    let foundName = false;
+                    let stock = '';
 
-    for (let i = 0; i < secondEntry.length; i++) {
-
-        const line = secondEntry[i];
-        const lower = line.toLowerCase();
-
-        const tMatch = line.match(/\b(\d{2}:\d{2}:\d{2})\b/);
-        const lineTime = tMatch ? tMatch[1] : null;
-
-        if (!foundMed && lower.includes(med.toLowerCase())) {
-            foundMed = true;
-        }
-
-        if (foundMed && !foundName && lower.includes(name.toLowerCase())) {
-            foundName = true;
-        }
-
-        if (foundName && lineTime) {
-
-    const lineTimeSec = timeToSeconds(lineTime);
-
-    if (Math.abs(lineTimeSec - baseTimeSec) <= 2) {
-
-        const invoiceMatch = line.match(/SO\/[\w/]+/);
-
-        if (invoiceMatch) {
-
-             invoice = invoiceMatch[0];
-
-            let stock = '';
-
-// get all .00 values in the line
-const matches = [...line.matchAll(/(\d+)\.00/g)];
-const values = matches.map(m => m[1]);
-
-// find where AMOUNT is
-const amtIndex = values.indexOf(amount);
-
-// stock is next value after amount
-if (amtIndex !== -1 && values[amtIndex + 1]) {
-    stock = values[amtIndex + 1];
-}
-
-            break;
-        }
-    }
+                    function extractNumbers(line) {
+                        return [...line.matchAll(/(\d+)\.00/g)].map(m => m[1]);
+                    }
+                    
+                    for (const secondEntry of secondEntries) {
+                    
+                        let foundMed = false;
+                        let foundName = false;
+                        let matchedTime = false;
+                    
+                        for (let i = 0; i < secondEntry.length; i++) {
+                    
+                            const line = secondEntry[i];
+                            const lower = line.toLowerCase();
+                    
+                            const tMatch = line.match(/\b(\d{2}:\d{2}:\d{2})\b/);
+                            const lineTime = tMatch ? tMatch[1] : null;
+                    
+                            // STEP 1: MED match
+                            if (!foundMed && lower.includes(med.toLowerCase())) {
+                                foundMed = true;
+                            }
+                    
+                            // STEP 2: NAME match (after MED found)
+                            if (foundMed && !foundName && lower.includes(name.toLowerCase())) {
+                                foundName = true;
+                            }
+                    
+                            // STEP 3: TIME match (±2 sec)
+                            if (foundMed && foundName && lineTime) {
+                    
+                                const lineTimeSec = timeToSeconds(lineTime);
+                                const baseTimeSec = timeToSeconds(time);
+                    
+                                if (Math.abs(lineTimeSec - baseTimeSec) <= 2) {
+                                    matchedTime = true;
+                                }
+                            }
+                    
+                            // STEP 4: STOCK extraction
+                            if (foundMed && foundName && matchedTime) {
+                    
+                                const numbers = extractNumbers(line);
+                    
+                                const amtIndex = numbers.indexOf(String(amount));
+                    
+                                if (amtIndex !== -1 && numbers[amtIndex + 1]) {
+                                    stock = numbers[amtIndex + 1];
+                                }
+                    
+                                break;
+                            }
+                        }
+                    
+                        if (stock) break;
+                    }
+                }
+            }
         }
     }
 
