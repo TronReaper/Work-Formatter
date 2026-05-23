@@ -629,6 +629,21 @@ document.addEventListener("DOMContentLoaded", () => {
                 element.classList.remove('copied');
             }, 500);
         }
+
+        function copyRow(time, invoice, name, address, identification, med, amount) {
+
+    const rowData = [
+        time,
+        invoice,
+        name,
+        address,
+        identification,
+        med,
+        amount
+    ].join('\t');
+
+    navigator.clipboard.writeText(rowData);
+        }
         
         function toggleSecondBox() {
 
