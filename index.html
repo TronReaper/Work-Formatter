@@ -674,14 +674,15 @@ document.addEventListener("DOMContentLoaded", () => {
         
                 const line = secondEntry[i];
         
-                const matches = [...line.matchAll(/(\d+)\.00/g)];
+                const regex = /\d+\.00/g;
+                let match;
         
-                for (const match of matches) {
+                while ((match = regex.exec(line)) !== null) {
         
                     count++;
         
                     if (count === 4) {
-                        return match[1]; // number before .00
+                        return match[0].split('.')[0];
                     }
                 }
             }
