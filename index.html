@@ -231,14 +231,16 @@
         .copied {
             outline: 2px solid #00cc66 !important;
         }
-        .specialRowBtn {
-            background: #2a1f1f !important;
-            border: 1px solid #ff4d4d !important;
+        
         }
         .copybox.copyperm  {
             background: #404040 !important;
             border: 1px solid #575757 !important;
         }
+
+        .specialRowBtn {
+            background: #2a1f1f !important;
+            outline: 1px solid #ff4d4d;
 
         .copybox.med-special {
             background: #3a2a1a; 
@@ -1111,6 +1113,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                 data-id="${encodeURIComponent(identification || '')}"
                                 data-med="${encodeURIComponent(med || '')}"
                                 data-amount="${encodeURIComponent(amount || '')}"
+                                data-isspecial="${isSpecialMed}"
                                 data-stock="${encodeURIComponent(stock || '')}"
                                 onclick="copyRowFromBtn(this)">
                             </button>
