@@ -720,7 +720,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     // 4. only start counting inside correct context
                     if (foundName && localTimeMatch) {
         
-                        const matches = line.match(/\d+\.00/g);
+                        const matches = line.match(/[\d,]+\.\d{2}/g);
         
                         if (matches) {
         
@@ -729,7 +729,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                 count++;
         
                                 if (count === 4) {
-                                    return m.split('.')[0];
+                                    return m.split('.')[0].replace(/,/g, '');
                                 }
                             }
                         }
@@ -1005,12 +1005,10 @@ document.addEventListener("DOMContentLoaded", () => {
                         for (let j = i; j < entryLines.length; j++) {
 
                             const numMatch =
-                                entryLines[j].match(/(\d+)\.0/);
-
+                                entryLines[j].match(/([\d,]+)\.0/);
+                            
                             if (numMatch) {
-
-                                amount = numMatch[1];
-
+                                amount = numMatch[1].replace(/,/g, '');
                                 break;
                             }
                         }
