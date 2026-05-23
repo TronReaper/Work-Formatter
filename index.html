@@ -649,16 +649,16 @@ document.addEventListener("DOMContentLoaded", () => {
             }, 500);
         }
 
-        function copyRow(time, invoice, name, address, identification, med, amount) {
+        function copyRowFromBtn(btn) {
 
     const rowData = [
-        time,
-        invoice,
-        name,
-        address,
-        identification,
-        med,
-        amount
+        decodeURIComponent(btn.dataset.time),
+        decodeURIComponent(btn.dataset.invoice),
+        decodeURIComponent(btn.dataset.name),
+        decodeURIComponent(btn.dataset.address),
+        decodeURIComponent(btn.dataset.id),
+        decodeURIComponent(btn.dataset.med),
+        decodeURIComponent(btn.dataset.amount)
     ].join('\t');
 
     navigator.clipboard.writeText(rowData);
@@ -1015,20 +1015,20 @@ for (const secondEntry of secondEntries) {
 
                         <td style="color:#888; font-family:'JetBrains Mono', monospace;">
 
-                            <div>${time || '-'}</div>
+    <div>${time || '-'}</div>
 
-                            <button class="rowCopyBtn"
-                                onclick="copyRow(
-                                    ${JSON.stringify(time)},
-                                    ${JSON.stringify(invoice)},
-                                    ${JSON.stringify(name)},
-                                    ${JSON.stringify(address)},
-                                    ${JSON.stringify(identification)},
-                                    ${JSON.stringify(med)},
-                                    ${JSON.stringify(amount)}
-                                )">
-                            </button>
-                        </td>
+    <button class="rowCopyBtn"
+        data-time="${encodeURIComponent(time || '')}"
+        data-invoice="${encodeURIComponent(invoice || '')}"
+        data-name="${encodeURIComponent(name || '')}"
+        data-address="${encodeURIComponent(address || '')}"
+        data-id="${encodeURIComponent(identification || '')}"
+        data-med="${encodeURIComponent(med || '')}"
+        data-amount="${encodeURIComponent(amount || '')}"
+        onclick="copyRowFromBtn(this)">
+    </button>
+
+</td>
 
                         <td>
                             <div class="copybox"
