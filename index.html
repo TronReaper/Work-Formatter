@@ -666,23 +666,41 @@ document.addEventListener("DOMContentLoaded", () => {
             box.classList.toggle('show');
         }
 
-        function getStockFromFour00(secondEntry, startIndex = 0) {
-
+        function getStockFromFour00(secondEntry) {
+        
+            let foundMed = false;
+            let foundName = false;
             let count = 0;
         
-            for (let i = startIndex; i < secondEntry.length; i++) {
+            for (let i = 0; i < secondEntry.length; i++) {
         
                 const line = secondEntry[i];
+                const lower = line.toLowerCase();
         
-                const regex = /\d+\.00/g;
-                let match;
+                // SAME STYLE AS INVOICE: anchor first
+                if (!foundMed && lower.includes(med.toLowerCase())) {
+                    foundMed = true;
+                }
         
-                while ((match = regex.exec(line)) !== null) {
+                if (foundMed && !foundName && lower.includes(name.toLowerCase())) {
+                    foundName = true;
+                }
         
-                    count++;
+                // only start counting AFTER context is found
+                if (foundName) {
         
-                    if (count === 4) {
-                        return match[0].split('.')[0];
+                    const matches = line.match(/\d+\.00/g);
+        
+                    if (matches) {
+        
+                        for (const m of matches) {
+        
+                            count++;
+        
+                            if (count === 4) {
+                                return m.split('.')[0];
+                            }
+                        }
                     }
                 }
             }
