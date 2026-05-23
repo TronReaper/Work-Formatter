@@ -1001,13 +1001,16 @@ for (const secondEntry of secondEntries) {
 
              invoice = invoiceMatch[0];
 
-            // FIND STOCK BASED ON AMOUNT POSITION
-const moneyMatches = [...line.matchAll(/(\d+)\.00/g)];
+            let stock = '';
 
-const values = moneyMatches.map(m => m[1]);
+// get all .00 values in the line
+const matches = [...line.matchAll(/(\d+)\.00/g)];
+const values = matches.map(m => m[1]);
 
+// find where AMOUNT is
 const amtIndex = values.indexOf(amount);
 
+// stock is next value after amount
 if (amtIndex !== -1 && values[amtIndex + 1]) {
     stock = values[amtIndex + 1];
 }
