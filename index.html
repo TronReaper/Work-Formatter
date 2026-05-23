@@ -666,43 +666,71 @@ document.addEventListener("DOMContentLoaded", () => {
             box.classList.toggle('show');
         }
 
-        function getStockFromFour00(secondEntry, med, name) {
+        function getStockFromFour00(secondEntries, med, name, baseTimeSec) {
 
-            let foundMed = false;
-            let foundName = false;
-            let count = 0;
+            const normalize = (str) =>
+                (str || '')
+                    .toLowerCase()
+                    .replace(/\s+/g, ' ')
+                    .trim();
         
-            const medLower = (med || '').toLowerCase();
-            const nameLower = (name || '').toLowerCase();
+            const medLower = normalize(med);
+            const nameLower = normalize(name);
         
-            for (let i = 0; i < secondEntry.length; i++) {
+            function timeToSeconds(t) {
+                const [h, m, s] = t.split(':').map(Number);
+                return h * 3600 + m * 60 + s;
+            }
         
-                const line = secondEntry[i];
-                const lower = line.toLowerCase();
+            for (const entry of secondEntries) {
         
-                // STEP 1: anchor on med
-                if (!foundMed && lower.includes(medLower)) {
-                    foundMed = true;
-                }
+                let foundMed = false;
+                let foundName = false;
+                let localTimeMatch = false;
+                let count = 0;
         
-                // STEP 2: anchor on name AFTER med
-                if (foundMed && !foundName && lower.includes(nameLower)) {
-                    foundName = true;
-                }
+                for (let i = 0; i < entry.length; i++) {
         
-                // STEP 3: only start counting AFTER both are found
-                if (foundName) {
+                    const line = entry[i];
+                    const lower = line.toLowerCase();
         
-                    const matches = line.match(/\d+\.00/g);
+                    const tMatch = line.match(/\b(\d{2}:\d{2}:\d{2})\b/);
+                    const lineTime = tMatch ? tMatch[1] : null;
         
-                    if (matches) {
+                    // 1. anchor med
+                    if (!foundMed && lower.includes(medLower)) {
+                        foundMed = true;
+                    }
         
-                        for (const m of matches) {
+                    // 2. anchor name after med
+                    if (foundMed && !foundName && lower.includes(nameLower)) {
+                        foundName = true;
+                    }
         
-                            count++;
+                    // 3. confirm time alignment
+                    if (foundName && lineTime) {
         
-                            if (count === 4) {
-                                return m.split('.')[0];
+                        const lineTimeSec = timeToSeconds(lineTime);
+        
+                        if (Math.abs(lineTimeSec - baseTimeSec) <= 2) {
+                            localTimeMatch = true;
+                        }
+                    }
+        
+                    // 4. only start counting inside correct context
+                    if (foundName && localTimeMatch) {
+        
+                        const matches = line.match(/\d+\.00/g);
+        
+                        if (matches) {
+        
+                            for (const m of matches) {
+        
+                                count++;
+        
+                                if (count === 4) {
+                                    return m.split('.')[0];
+                                }
                             }
                         }
                     }
@@ -1055,31 +1083,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 for (const secondEntry of secondEntries) {
                 
-                    let matchIndex = -1;
-                
-                    for (let i = 0; i < secondEntry.length; i++) {
-                
-                        const line = secondEntry[i];
-                        const lower = line.toLowerCase();
-                
-                        const tMatch = line.match(/\b(\d{2}:\d{2}:\d{2})\b/);
-                        const lineTime = tMatch ? tMatch[1] : null;
-                
-                        if (
-                            lower.includes(med.toLowerCase()) &&
-                            lower.includes(name.toLowerCase()) &&
-                            lineTime
-                        ) {
-                            matchIndex = i;
-                            break;
-                        }
-                    }
-                
-                    if (matchIndex !== -1) {
-                
-                        stock = getStockFromFour00(secondEntry, med, name);
-                
-                    }
+                    stock = getStockFromFour00(secondEntries, med, name, baseTimeSec);
                 
                     if (stock) break;
                 }
