@@ -238,26 +238,7 @@
             background: #3a2a1a; 
             outline: 1px solid #ffb347;
         }
-
-        .rowCopyBtn {
-    margin-top: 6px;
-    width: 100%;
-    height: 18px;
-    border: none;
-    border-radius: 6px;
-    background: #262626;
-    cursor: pointer;
-    transition: 0.15s ease;
-}
-
-.rowCopyBtn:hover {
-    background: #3a3a3a;
-}
-
-.rowCopyBtn:active {
-    transform: scale(0.96);
-}
-    
+        
         /* MODAL */
     
         #changelogModal {
@@ -651,16 +632,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
         function copyRowFromBtn(btn) {
 
-    const rowData = [
-        decodeURIComponent(btn.dataset.invoice),
-        decodeURIComponent(btn.dataset.name),
-        decodeURIComponent(btn.dataset.address),
-        decodeURIComponent(btn.dataset.id),
-        decodeURIComponent(btn.dataset.med),
-        decodeURIComponent(btn.dataset.amount)
-    ].join('\t');
+            const rowData = [
+                decodeURIComponent(btn.dataset.invoice),
+                decodeURIComponent(btn.dataset.name),
+                decodeURIComponent(btn.dataset.address),
+                decodeURIComponent(btn.dataset.id),
+                decodeURIComponent(btn.dataset.med),
+                decodeURIComponent(btn.dataset.amount)
+            ].join('\t');
             
-    navigator.clipboard.writeText(rowData);
+            navigator.clipboard.writeText(rowData);
+            
+            btn.classList.add('copied');
+            btn.classList.add('copyperm');
+
+            setTimeout(() => {
+                btn.classList.remove('copied');
+            }, 500);
         }
         
         function toggleSecondBox() {
@@ -1016,7 +1004,7 @@ for (const secondEntry of secondEntries) {
 
     <div>${time || '-'}</div>
 
-    <button class="rowCopyBtn"
+    <button class="rowCopyBtn copybox"
         data-invoice="${encodeURIComponent(invoice || '')}"
         data-name="${encodeURIComponent(name || '')}"
         data-address="${encodeURIComponent(address || '')}"
