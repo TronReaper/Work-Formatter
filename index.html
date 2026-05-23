@@ -666,6 +666,29 @@ document.addEventListener("DOMContentLoaded", () => {
             box.classList.toggle('show');
         }
 
+        function getStockFromFour00(secondEntry, startIndex = 0) {
+
+            let count = 0;
+        
+            for (let i = startIndex; i < secondEntry.length; i++) {
+        
+                const line = secondEntry[i];
+        
+                const matches = [...line.matchAll(/(\d+)\.00/g)];
+        
+                for (const match of matches) {
+        
+                    count++;
+        
+                    if (count === 4) {
+                        return match[1]; // number before .00
+                    }
+                }
+            }
+        
+            return '';
+        }
+
         const specialMeds = [
             "xanax",
             "apo-alpraz",
@@ -1003,6 +1026,39 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
         
                     if (invoice) break;
+                }
+
+                let stock = '';
+
+                for (const secondEntry of secondEntries) {
+                
+                    let matchIndex = -1;
+                
+                    for (let i = 0; i < secondEntry.length; i++) {
+                
+                        const line = secondEntry[i];
+                        const lower = line.toLowerCase();
+                
+                        const tMatch = line.match(/\b(\d{2}:\d{2}:\d{2})\b/);
+                        const lineTime = tMatch ? tMatch[1] : null;
+                
+                        if (
+                            lower.includes(med.toLowerCase()) &&
+                            lower.includes(name.toLowerCase()) &&
+                            lineTime
+                        ) {
+                            matchIndex = i;
+                            break;
+                        }
+                    }
+                
+                    if (matchIndex !== -1) {
+                
+                        stock = getStockFromFour00(secondEntry, matchIndex);
+                
+                    }
+                
+                    if (stock) break;
                 }
                 
                 html += `
