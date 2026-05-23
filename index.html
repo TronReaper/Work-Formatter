@@ -565,384 +565,557 @@ document.addEventListener("DOMContentLoaded", () => {
     <div id="output"></div>
 
     <script>
+        
+        function showLastUpdated() {
 
-function showLastUpdated() {
-    const lastUpdated = new Date(document.lastModified);
-    document.getElementById("lastUpdated").innerText =
-        "Last updated: " + lastUpdated.toLocaleString();
-}
-showLastUpdated();
+            const lastUpdated = new Date(document.lastModified);
 
-async function loadChangelog() {
-    try {
-        const response = await fetch('changelogs.md');
-        const text = await response.text();
-
-        const box = document.getElementById('changelogContent');
-        box.innerText = text;
-
-        requestAnimationFrame(() => {
-            box.scrollTo({
-                top: box.scrollHeight,
-                behavior: "smooth"
-            });
-        });
-
-    } catch (err) {
-        document.getElementById('changelogContent').innerText =
-            'Failed to load changelogs.';
-    }
-}
-
-function openChangelog() {
-    document.getElementById("changelogModal").classList.add("show");
-    loadChangelog();
-}
-
-function closeChangelog() {
-    document.getElementById("changelogModal").classList.remove("show");
-}
-
-function cleanLine(line) {
-    return line.replace(/‎/g, '').trim();
-}
-
-function copyText(element) {
-    const text = decodeURIComponent(element.dataset.copy || '');
-    navigator.clipboard.writeText(text);
-
-    element.classList.add('copied', 'copyperm');
-
-    setTimeout(() => {
-        element.classList.remove('copied');
-    }, 500);
-}
-
-function copyRowFromBtn(btn) {
-
-    const rowData = [
-        decodeURIComponent(btn.dataset.invoice),
-        decodeURIComponent(btn.dataset.name),
-        decodeURIComponent(btn.dataset.address),
-        decodeURIComponent(btn.dataset.id),
-        decodeURIComponent(btn.dataset.med),
-        decodeURIComponent(btn.dataset.amount),
-        decodeURIComponent(btn.dataset.stock)
-    ].join('\t');
-
-    navigator.clipboard.writeText(rowData);
-
-    btn.classList.add('copied', 'copyperm');
-
-    setTimeout(() => {
-        btn.classList.remove('copied');
-    }, 500);
-}
-
-function toggleSecondBox() {
-    document.getElementById('secondBoxWrapper')
-        .classList.toggle('show');
-}
-
-const specialMeds = [
-    "xanax", "apo-alpraz", "apo-lorazepam", "asolan",
-    "concerta", "diazepam", "insopin", "medikinet",
-    "nasal spray", "ritalin", "rivopam", "rivotril",
-    "somidem", "stillnox"
-];
-
-function formatEntries() {
-
-    const raw = document.getElementById('input').value;
-    const raw2 = document.getElementById('input2').value;
-
-    // -------------------------
-    // MAIN ENTRIES
-    // -------------------------
-    const lines = raw.split('\n').map(cleanLine);
-
-    const entries = [];
-    let currentEntry = [];
-
-    for (const line of lines) {
-        currentEntry.push(line);
-
-        if (line.includes('PR/')) {
-            entries.push(currentEntry);
-            currentEntry = [];
-        }
-    }
-
-    // -------------------------
-    // SECOND BOX ENTRIES
-    // -------------------------
-    const secondLines = raw2.split('\n').map(cleanLine);
-
-    const secondEntries = [];
-    let currentSecondEntry = [];
-
-    for (const line of secondLines) {
-
-        const isNewEntry =
-            line.includes('M (R)') &&
-            line.includes('THE MIND FACULTY SDN BHD');
-
-        if (isNewEntry && currentSecondEntry.length > 0) {
-            secondEntries.push(currentSecondEntry);
-            currentSecondEntry = [];
+            document.getElementById("lastUpdated").innerText =
+                "Last updated: " + lastUpdated.toLocaleString();
         }
 
-        currentSecondEntry.push(line);
-    }
+        showLastUpdated();
 
-    if (currentSecondEntry.length > 0) {
-        secondEntries.push(currentSecondEntry);
-    }
+        async function loadChangelog() {
 
-    // -------------------------
-    // HTML START
-    // -------------------------
-    let html = `
-        <table>
-            <thead>
-                <tr>
-                    <th>TIME</th>
-                    <th>INVOICE</th>
-                    <th>NAME</th>
-                    <th>ADDRESS</th>
-                    <th>IDENTIFICATION</th>
-                    <th>MED</th>
-                    <th>AMOUNT</th>
-                    <th>STOCK</th>
-                </tr>
-            </thead>
-            <tbody>
-    `;
-
-    // -------------------------
-    // PROCESS EACH ENTRY
-    // -------------------------
-    entries.forEach(entryLines => {
-
-        // TIME
-        let time = '';
-        const firstLine = entryLines[0] || '';
-        const timeMatch = firstLine.match(/\b(\d{2}:\d{2}:\d{2})\b/);
-
-        if (timeMatch) time = timeMatch[1];
-
-        const timeToSeconds = (t) => {
-            if (!t) return 0;
-            const [h, m, s] = t.split(':').map(Number);
-            return (h * 3600) + (m * 60) + s;
-        };
-
-        const baseTimeSec = timeToSeconds(time);
-
-        // NAME
-        let name = '';
-        const nameMatch = firstLine.match(/\d{2}:\d{2}:\d{2}\s+(.*?)\s+TMF/i);
-
-        if (nameMatch) {
-            name = nameMatch[1].replace(/\s+\.\s*$/, '').trim();
+            try {
+        
+                const response = await fetch('changelogs.md');
+                const text = await response.text();
+        
+                const box = document.getElementById('changelogContent');
+        
+                box.innerText = text;
+                requestAnimationFrame(() => {
+                    box.scrollTo({
+                        top: box.scrollHeight,
+                        behavior: "smooth"
+                    });
+                });
+        
+            } catch (err) {
+        
+                document.getElementById('changelogContent').innerText =
+                    'Failed to load changelogs.';
+            }
         }
 
-        // ID
-        let identification = '';
-        if (entryLines[3]) {
-            identification = entryLines[3].replace(/[^a-zA-Z0-9-]/g, '');
+        function openChangelog() {
+
+            const modal = document.getElementById("changelogModal");
+    
+            modal.classList.add("show");
+        
+            loadChangelog();
+        }
+    
+        function closeChangelog() {
+    
+            const modal = document.getElementById("changelogModal");
+    
+            modal.classList.remove("show");
         }
 
-        // ADDRESS
-        let address = entryLines
-            .slice(6, 19)
-            .map(x => x.trim())
-            .filter(x => x && x !== '-')
-            .join(', ')
-            .replace(/,\s*,+/g, ',')
-            .replace(/\s+/g, ' ')
-            .trim();
+        function cleanLine(line) {
 
-        // -------------------------
-        // MED
-        // -------------------------
-        let med = '';
+            return line
+                .replace(/‎/g, '')
+                .trim();
+        }
 
-        for (const line of entryLines) {
+        function copyText(element) {
 
-            const match = line.match(/(ORIGINAL MED|GENERIC MED)\s+(.*)/i);
-            if (!match) continue;
+            const text = decodeURIComponent(element.dataset.copy || '');
+        
+            navigator.clipboard.writeText(text);
+        
+            element.classList.add('copied');
+            element.classList.add('copyperm');
+        
+            setTimeout(() => {
+                element.classList.remove('copied');
+            }, 500);
+        }
 
-            const afterMedRaw = match[2] || '';
-            const lowerLine = afterMedRaw.toLowerCase();
+        function copyRowFromBtn(btn) {
 
-            // Esketamine
-            if (lowerLine.includes('esketamine')) {
-                const beforeBox = afterMedRaw.split(/BOX/i)[0] || '';
-                const parts = beforeBox.split(/\t|\s{2,}/).map(x => x.trim()).filter(Boolean);
-                med = parts[parts.length - 1] || beforeBox.trim();
-                break;
+            const rowData = [
+                decodeURIComponent(btn.dataset.invoice),
+                decodeURIComponent(btn.dataset.name),
+                decodeURIComponent(btn.dataset.address),
+                decodeURIComponent(btn.dataset.id),
+                decodeURIComponent(btn.dataset.med),
+                decodeURIComponent(btn.dataset.amount)
+            ].join('\t');
+            
+            navigator.clipboard.writeText(rowData);
+            
+            btn.classList.add('copied');
+            btn.classList.add('copyperm');
+
+            setTimeout(() => {
+                btn.classList.remove('copied');
+            }, 500);
+        }
+        
+        function toggleSecondBox() {
+
+            const box =
+                document.getElementById('secondBoxWrapper');
+        
+            box.classList.toggle('show');
+        }
+
+        const specialMeds = [
+            "xanax",
+            "apo-alpraz",
+            "apo-lorazepam",
+            "asolan",
+            "concerta",
+            "diazepam",
+            "insopin",
+            "medikinet",
+            "nasal spray",
+            "ritalin",
+            "rivopam",
+            "rivotril",
+            "somidem",
+            "stillnox"
+        ];
+
+        const specialMedExactMatch = [
+            "alprazolam",
+            "apo-alpraz"
+        ];
+
+        function formatEntries() {
+
+            const raw = document.getElementById('input').value;
+
+            const raw2 = document.getElementById('input2').value;
+
+            const lines = raw
+                .split('\n')
+                .map(cleanLine);
+
+            const entries = [];
+
+            let currentEntry = [];
+
+            for (const line of lines) {
+
+                currentEntry.push(line);
+
+                if (line.includes('PR/')) {
+
+                    entries.push(currentEntry);
+
+                    currentEntry = [];
+                }
             }
 
-            // Xanax / Alprazolam
-            if (
-                lowerLine.includes('alprazolam') ||
-                lowerLine.includes('apo-alpraz')
-            ) {
-                med = afterMedRaw.split(/\t|CAPSULE|TABLET|BOX/i)[0]
+            // SECOND BOX PARSING
+
+            const secondLines = raw2
+                .split('\n')
+                .map(cleanLine);
+            
+            const secondEntries = [];
+            
+            let currentSecondEntry = [];
+            
+            for (const line of secondLines) {
+            
+                const isNewEntry =
+                    line.includes('M (R)') &&
+                    line.includes('THE MIND FACULTY SDN BHD');
+            
+                if (isNewEntry && currentSecondEntry.length > 0) {
+            
+                    secondEntries.push(currentSecondEntry);
+            
+                    currentSecondEntry = [];
+                }
+            
+                currentSecondEntry.push(line);
+            }
+            
+            if (currentSecondEntry.length > 0) {
+            
+                secondEntries.push(currentSecondEntry);
+            }
+
+            let html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>TIME</th>
+                            <th>INVOICE</th>
+                            <th>NAME</th>
+                            <th>ADDRESS</th>
+                            <th>IDENTIFICATION</th>
+                            <th>MED</th>
+                            <th>AMOUNT</th>
+                            <th>STOCK</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            entries.forEach(entryLines => {
+
+                // TIME
+
+                let time = '';
+
+                const firstLine = entryLines[0] || '';
+
+                const timeMatch =
+                    firstLine.match(/\b(\d{2}:\d{2}:\d{2})\b/);
+
+                if (timeMatch) {
+                    time = timeMatch[1];
+                }
+
+                // NAME
+
+                let name = '';
+
+                const nameMatch =
+                    firstLine.match(/\d{2}:\d{2}:\d{2}\s+(.*?)\s+TMF/i);
+
+                if (nameMatch) {
+
+                    name = nameMatch[1]
+                        .replace(/\s+\.\s*$/, '')
+                        .trim();
+                }
+
+                // IDENTIFICATION
+
+                let identification = '';
+
+                if (entryLines[3]) {
+
+                    identification =
+                        entryLines[3].replace(/[^a-zA-Z0-9-]/g, '');
+                }
+
+                // ADDRESS
+
+                let addressLines =
+                    entryLines.slice(6, 19);
+
+                addressLines = addressLines
+                    .map(x => x.trim())
+                    .filter(x => x !== '-')
+                    .filter(x => x !== '');
+
+                let address = addressLines.join(', ');
+
+                address = address
+                    .replace(/,\s*,+/g, ',')
                     .replace(/\s+/g, ' ')
                     .trim();
-                break;
-            }
 
-            // NORMAL CASE
-            const beforeType = afterMedRaw.split(/CAPSULE|TABLET|BOX/i)[0] || '';
-            const brackets = [...beforeType.matchAll(/\(([^)]+)\)/g)];
+                // MED
+                let med = '';
+                
+                for (const line of entryLines) {
+                
+                    const match = line.match(/(ORIGINAL MED|GENERIC MED)\s+(.*)/i);
+                
+                    if (!match) continue;
+                
+                    const afterMedRaw = match[2] || '';
+                
+                    const cleanedAfterMed = afterMedRaw
+                        .replace(/\s+/g, ' ')
+                        .trim();
+                
+                // normalize for checking
+                    const lowerLine = afterMedRaw.toLowerCase();
 
-            if (brackets.length > 0) {
-
-                const detected = brackets[0][1].trim();
-
-                med = (detected.toLowerCase() === "lemborexant")
-                    ? "DAYVIGO 5MG"
-                    : detected;
-
-            } else {
-
-                const fallback = beforeType
-                    .split(/\s{2,}|\t+/)
-                    .map(x => x.trim())
-                    .filter(Boolean);
-
-                med = fallback[fallback.length - 1] || '';
-            }
-
-            break;
-        }
-
-        // -------------------------
-        // AMOUNT
-        // -------------------------
-        let amount = '';
-
-        for (let i = 0; i < entryLines.length; i++) {
-
-            const line = entryLines[i];
-
-            if (
-                line.includes('CAPSULE') ||
-                line.includes('TABLET') ||
-                line.includes('BOX')
-            ) {
-                for (let j = i; j < entryLines.length; j++) {
-
-                    const numMatch = entryLines[j].match(/(\d+)\.0/);
-
-                    if (numMatch) {
-                        amount = numMatch[1];
+                // ESKETAMINE SPECIAL CASE
+                    const isEsketamineCase =
+                        lowerLine.includes('esketamine');
+                
+                    if (isEsketamineCase) {
+                    
+                        // take everything BEFORE BOX
+                        const beforeBox = afterMedRaw.split(/BOX/i)[0] || '';
+                    
+                        // extract column-like value (NASAL SPRAY 28MG)
+                        const parts = beforeBox
+                            .split(/\t|\s{2,}/)
+                            .map(x => x.trim())
+                            .filter(Boolean);
+                    
+                        med = parts[parts.length - 1] || beforeBox.trim();
+                    
                         break;
                     }
+                
+                //  XANAX SPECIAL CASE
+                    const isXanaxCase =
+                        lowerLine.includes('alprazolam') ||
+                        lowerLine.includes('apo-alpraz');
+                
+                    if (isXanaxCase) {
+                
+                        // take FULL name after MED (before TAB breaks it later)
+                        const fullName = afterMedRaw
+                            .split(/\t|CAPSULE|TABLET|BOX/i)[0]
+                            .replace(/\s+/g, ' ')
+                            .trim();
+                
+                        med = fullName;
+                        break;
+                    }
+                
+                // ------------------------------
+// 🟢 NORMAL CASE
+// ------------------------------
+
+const beforeType =
+    afterMedRaw.split(/CAPSULE|TABLET|BOX/i)[0] || '';
+
+const allBrackets =
+    [...beforeType.matchAll(/\(([^)]+)\)/g)];
+
+if (allBrackets.length > 0) {
+
+    let detectedMed =
+        allBrackets[0][1].trim();
+
+    // Convert Lemborexant -> DAYVIGO 5MG
+    if (
+        detectedMed.toLowerCase() === "lemborexant"
+    ) {
+
+        med = "DAYVIGO 5MG";
+
+    } else {
+
+        med = detectedMed;
+    }
+
+} else {
+
+    const fallback =
+        beforeType
+            .split(/\s{2,}|\t+/)
+            .map(x => x.trim())
+            .filter(x => x);
+
+    med = fallback[fallback.length - 1] || '';
+}
+
+break;
                 }
-            }
-        }
 
-        // -------------------------
-        // STOCK + INVOICE
-        // -------------------------
-        let invoice = '';
-        let stock = ''; // ✅ FIXED SCOPE
+                // AMOUNT
 
-        for (const secondEntry of secondEntries) {
+                let amount = '';
 
-            let foundMed = false;
-            let foundName = false;
+                for (let i = 0; i < entryLines.length; i++) {
 
-            for (let i = 0; i < secondEntry.length; i++) {
+                    const line = entryLines[i];
 
-                const line = secondEntry[i];
-                const lower = line.toLowerCase();
+                    if (
+                        line.includes('CAPSULE') ||
+                        line.includes('TABLET') ||
+                        line.includes('BOX')
+                    ) {
 
-                const tMatch = line.match(/\b(\d{2}:\d{2}:\d{2})\b/);
-                const lineTime = tMatch ? tMatch[1] : null;
+                        for (let j = i; j < entryLines.length; j++) {
 
-                if (!foundMed && lower.includes(med.toLowerCase())) {
-                    foundMed = true;
-                }
+                            const numMatch =
+                                entryLines[j].match(/(\d+)\.0/);
 
-                if (foundMed && !foundName && lower.includes(name.toLowerCase())) {
-                    foundName = true;
-                }
+                            if (numMatch) {
 
-                if (foundName && lineTime) {
+                                amount = numMatch[1];
 
-                    const lineTimeSec = timeToSeconds(lineTime);
-
-                    if (Math.abs(lineTimeSec - baseTimeSec) <= 2) {
-
-                        const invoiceMatch = line.match(/SO\/[\w/]+/);
-
-                        if (invoiceMatch) {
-
-                            invoice = invoiceMatch[0];
-
-                            const matches = [...line.matchAll(/(\d+)\.00/g)];
-                            const values = matches.map(m => m[1]);
-
-                            const amt = String(amount).replace(/^0+/, '').trim();
-                            const index = values.findIndex(v => v === amt);
-
-                            if (index !== -1 && index + 1 < values.length) {
-                                stock = values[index + 1];
+                                break;
                             }
                         }
                     }
                 }
+                
+                const normalize = (str) =>
+                    (str || '')
+                        .toLowerCase()
+                        .replace(/\s+/g, ' ')
+                        .trim();
+                
+                const medClean = normalize(med);
+                
+                const isSpecialMed = specialMeds.some(m =>
+                    medClean.includes(normalize(m))
+                );
 
-                if (invoice) break;
-            }
+                // INVOICE LOOKUP
 
-            if (invoice) break;
+
+                let invoice = '';
+
+                function timeToSeconds(t) {
+    const [h, m, s] = t.split(':').map(Number);
+    return h * 3600 + m * 60 + s;
+}
+const baseTimeSec = timeToSeconds(time);
+                
+for (const secondEntry of secondEntries) {
+
+    let foundMed = false;
+    let foundName = false;
+
+    for (let i = 0; i < secondEntry.length; i++) {
+
+        const line = secondEntry[i];
+        const lower = line.toLowerCase();
+
+        const tMatch = line.match(/\b(\d{2}:\d{2}:\d{2})\b/);
+        const lineTime = tMatch ? tMatch[1] : null;
+
+        if (!foundMed && lower.includes(med.toLowerCase())) {
+            foundMed = true;
         }
 
-        const isSpecialMed = specialMeds.some(m =>
-            (med || '').toLowerCase().includes(m)
-        );
+        if (foundMed && !foundName && lower.includes(name.toLowerCase())) {
+            foundName = true;
+        }
 
-        // -------------------------
-        // ROW HTML
-        // -------------------------
-        html += `
-            <tr>
-                <td style="color:#888;font-family:monospace;">
-                    <div>${time || '-'}</div>
-                    <button class="rowCopyBtn copybox"
-                        data-invoice="${encodeURIComponent(invoice || '')}"
-                        data-name="${encodeURIComponent(name || '')}"
-                        data-address="${encodeURIComponent(address || '')}"
-                        data-id="${encodeURIComponent(identification || '')}"
-                        data-med="${encodeURIComponent(med || '')}"
-                        data-amount="${encodeURIComponent(amount || '')}"
-                        data-stock="${encodeURIComponent(stock || '')}"
-                        onclick="copyRowFromBtn(this)">
-                    </button>
-                </td>
+        if (foundName && lineTime) {
 
-                <td><div class="copybox" data-copy="${encodeURIComponent(invoice)}" onclick="copyText(this)">${invoice || '-'}</div></td>
-                <td><div class="copybox" data-copy="${encodeURIComponent(name)}" onclick="copyText(this)">${name || '-'}</div></td>
-                <td><div class="copybox" data-copy="${encodeURIComponent(address)}" onclick="copyText(this)">${address || '-'}</div></td>
-                <td><div class="copybox" data-copy="${encodeURIComponent(identification)}" onclick="copyText(this)">${identification || '-'}</div></td>
-                <td><div class="copybox ${isSpecialMed ? 'med-special' : ''}" data-copy="${encodeURIComponent(med)}" onclick="copyText(this)">${med || '-'}</div></td>
-                <td><div class="copybox" data-copy="${encodeURIComponent(amount)}" onclick="copyText(this)">${amount || '-'}</div></td>
-                <td><div class="copybox" data-copy="${encodeURIComponent(stock)}" onclick="copyText(this)">${stock || '-'}</div></td>
-            </tr>
-        `;
-    });
+    const lineTimeSec = timeToSeconds(lineTime);
 
-    html += `</tbody></table>`;
-    document.getElementById('output').innerHTML = html;
+    if (Math.abs(lineTimeSec - baseTimeSec) <= 2) {
+
+        const invoiceMatch = line.match(/SO\/[\w/]+/);
+
+        if (invoiceMatch) {
+
+             invoice = invoiceMatch[0];
+
+            let stock = '';
+
+// ---------------- STOCK (FINAL FIX) ----------------
+
+// grab all numbers like 0.00 / 7.00 / 918.00
+const matches = [...line.matchAll(/(\d+)\.00/g)]
+    .map(m => m[1]);
+
+// normalize amount safely
+const amt = parseInt(amount, 10);
+
+// convert all to numbers for reliable matching
+const nums = matches.map(n => parseInt(n, 10));
+
+// find index of amount
+const index = nums.indexOf(amt);
+
+// stock is next number after amount
+if (index !== -1 && nums[index + 1] !== undefined) {
+    stock = nums[index + 1].toString();
+} else {
+    stock = '';
 }
+    }
+        }
+    }
 
-</script>
+    if (invoice) break;
+}
+                
+                html += `
+                    <tr>
+
+                        <td style="color:#888; font-family:'JetBrains Mono', monospace;">
+
+    <div>${time || '-'}</div>
+
+    <button class="rowCopyBtn copybox"
+        data-invoice="${encodeURIComponent(invoice || '')}"
+        data-name="${encodeURIComponent(name || '')}"
+        data-address="${encodeURIComponent(address || '')}"
+        data-id="${encodeURIComponent(identification || '')}"
+        data-med="${encodeURIComponent(med || '')}"
+        data-amount="${encodeURIComponent(amount || '')}"
+        data-stock="${encodeURIComponent(stock || '')}"
+        onclick="copyRowFromBtn(this)">
+    </button>
+
+</td>
+
+                        <td>
+                            <div class="copybox"
+                                data-copy="${encodeURIComponent(invoice)}"
+                                 onclick="copyText(this)">
+                                ${invoice || '-'}
+                            </div>
+                        </td>
+                        
+                        <td>
+                            <div class="copybox"
+                                data-copy="${encodeURIComponent(name)}"
+                                 onclick="copyText(this)">
+                                ${name || '-'}
+                            </div>
+                        </td>
+
+                        <td>
+                            <div class="copybox"
+                                data-copy="${encodeURIComponent(address)}"
+                                 onclick="copyText(this)">
+                                ${address || '-'}
+                            </div>
+                        </td>
+
+                        <td>
+                            <div class="copybox"
+                                data-copy="${encodeURIComponent(identification)}"
+                                 onclick="copyText(this)">
+                                ${identification || '-'}
+                            </div>
+                        </td>
+
+                        <td>
+                            <div class="copybox med-box ${isSpecialMed ? 'med-special' : ''}"
+                                data-copy="${encodeURIComponent(med)}"
+                                onclick="copyText(this)">
+                                ${med || '-'}
+                            </div>
+                        </td>
+
+                        <td>
+                            <div class="copybox"
+                                data-copy="${encodeURIComponent(amount)}"
+                                 onclick="copyText(this)">
+                                ${amount || '-'}
+                            </div>
+                        </td>
+                        
+                        <td>
+                            <div class="copybox"
+                                data-copy="${encodeURIComponent(stock)}"
+                                 onclick="copyText(this)">
+                                ${stock || '-'}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                    </tbody>
+                </table>
+            `;
+
+            document.getElementById('output').innerHTML = html;
+        }
+    </script>
 
 </body>
 </html>
