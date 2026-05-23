@@ -995,7 +995,20 @@ for (const secondEntry of secondEntries) {
                     <tr>
 
                         <td style="color:#888; font-family:'JetBrains Mono', monospace;">
-                            ${time || '-'}
+
+                            <div>${time || '-'}</div>
+
+                            <button class="rowCopyBtn"
+                                onclick="copyRow(
+                                    ${JSON.stringify(time)},
+                                    ${JSON.stringify(invoice)},
+                                    ${JSON.stringify(name)},
+                                    ${JSON.stringify(address)},
+                                    ${JSON.stringify(identification)},
+                                    ${JSON.stringify(med)},
+                                    ${JSON.stringify(amount)}
+                                )">
+                            </button>
                         </td>
 
                         <td>
