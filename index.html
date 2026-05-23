@@ -1005,56 +1005,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (invoice) break;
                 }
                 
-                let stock = '';
-        
-                for (const secondEntry of secondEntries) {
-                
-                    let matchIndex = -1;
-                
-                    for (let i = 0; i < secondEntry.length; i++) {
-                
-                        const line = secondEntry[i];
-                        const lower = line.toLowerCase();
-                
-                        const tMatch = line.match(/\b(\d{2}:\d{2}:\d{2})\b/);
-                        const lineTime = tMatch ? tMatch[1] : null;
-                
-                        if (lower.includes(med.toLowerCase()) &&
-                            lower.includes(name.toLowerCase()) &&
-                            lineTime
-                        ) {
-                            matchIndex = i;
-                            break;
-                        }
-                    }
-                
-                    if (matchIndex !== -1) {
-                
-                        for (let j = matchIndex; j < secondEntry.length; j++) {
-                
-                            const line = secondEntry[j];
-                
-                            const rowMatch = line.match(/(\d+)\.00\s+(\d+)\.00\s+(\d+)\.00/);
-                
-                            if (rowMatch) {
-                
-                                const values = [rowMatch[1], rowMatch[2], rowMatch[3]];
-                                const amtClean = String(amount).replace(/^0+/, '');
-                
-                                const index = values.indexOf(amtClean);
-                
-                                if (index !== -1 && values[index + 1]) {
-                                    stock = values[index + 1];
-                                }
-                
-                                break;
-                            }
-                        }
-                    }
-                
-                    if (stock) break;
-                }
-                
                 html += `
                     <tr>
 
