@@ -964,141 +964,116 @@ document.addEventListener("DOMContentLoaded", () => {
                     const [h, m, s] = t.split(':').map(Number);
                     return h * 3600 + m * 60 + s;
                 }
-        const baseTimeSec = timeToSeconds(time);
+                const baseTimeSec = timeToSeconds(time);
+                                
+                for (const secondEntry of secondEntries) {
+                
+                    let foundMed = false;
+                    let foundName = false;
+                
+                    for (let i = 0; i < secondEntry.length; i++) {
+                
+                        const line = secondEntry[i];
+                        const lower = line.toLowerCase();
+                
+                        const tMatch = line.match(/\b(\d{2}:\d{2}:\d{2})\b/);
+                        const lineTime = tMatch ? tMatch[1] : null;
+                
+                        if (!foundMed && lower.includes(med.toLowerCase())) {
+                            foundMed = true;
+                        }
+                
+                        if (foundMed && !foundName && lower.includes(name.toLowerCase())) {
+                            foundName = true;
+                        }
+                
+                        if (foundName && lineTime) {
+                
+                            const lineTimeSec = timeToSeconds(lineTime);
                         
-        for (const secondEntry of secondEntries) {
-        
-            let foundMed = false;
-            let foundName = false;
-        
-            for (let i = 0; i < secondEntry.length; i++) {
-        
-                const line = secondEntry[i];
-                const lower = line.toLowerCase();
-        
-                const tMatch = line.match(/\b(\d{2}:\d{2}:\d{2})\b/);
-                const lineTime = tMatch ? tMatch[1] : null;
-        
-                if (!foundMed && lower.includes(med.toLowerCase())) {
-                    foundMed = true;
-                }
-        
-                if (foundMed && !foundName && lower.includes(name.toLowerCase())) {
-                    foundName = true;
-                }
-        
-                if (foundName && lineTime) {
-        
-            const lineTimeSec = timeToSeconds(lineTime);
-        
-            if (Math.abs(lineTimeSec - baseTimeSec) <= 2) {
-        
-                const invoiceMatch = line.match(/SO\/[\w/]+/);
-        
-                if (invoiceMatch) {
-        
-                    invoice = invoiceMatch[0];
-
-                    let stock = '';
-
-                    function timeToSeconds(t) {
-                        const [h, m, s] = t.split(':').map(Number);
-                        return h * 3600 + m * 60 + s;
-                    }
-                    
-                    const baseTimeSec = timeToSeconds(time);
-                    
-                    for (const secondEntry of secondEntries) {
-                    
-                        let foundMed = false;
-                        let foundName = false;
-                        let foundTime = false;
-                        let matchIndex = -1;
-                    
-                        // 1. FIND MATCH POSITION FIRST
-                        for (let i = 0; i < secondEntry.length; i++) {
-                    
-                            const line = secondEntry[i];
-                            const lower = line.toLowerCase();
-                    
-                            const tMatch = line.match(/\b(\d{2}:\d{2}:\d{2})\b/);
-                            const lineTime = tMatch ? tMatch[1] : null;
-                    
-                            if (!foundMed && lower.includes(med.toLowerCase())) {
-                                foundMed = true;
-                            }
-                    
-                            if (foundMed && !foundName && lower.includes(name.toLowerCase())) {
-                                foundName = true;
-                            }
-                    
-                            if (foundMed && foundName && lineTime) {
-                    
-                                const lineTimeSec = timeToSeconds(lineTime);
-                    
-                                if (Math.abs(lineTimeSec - baseTimeSec) <= 2) {
-                                    foundTime = true;
-                                    matchIndex = i;
-                                    break;
+                            if (Math.abs(lineTimeSec - baseTimeSec) <= 2) {
+                        
+                                const invoiceMatch = line.match(/SO\/[\w/]+/);
+                        
+                                if (invoiceMatch) {
+                                    invoice = invoiceMatch[0];
                                 }
                             }
                         }
-                    
-                        // 2. ONLY AFTER MATCH FOUND → SEARCH FOR STOCK BELOW IT
-                        if (matchIndex !== -1) {
-                    
-                            for (let j = matchIndex; j < secondEntry.length; j++) {
-                    
-                                const line = secondEntry[j];
-                    
-                                const matches = line.match(/(\d+)\.00\s+(\d+)\.00\s+(\d+)\.00/);
-                    
-                                if (matches) {
-                    
-                                    const numbers = matches.slice(1); // [0, 29, 8]
-                    
-                                    const amtClean = String(amount).replace(/^0+/, '');
-                    
-                                    const index = numbers.indexOf(amtClean);
-                    
-                                    if (index !== -1 && numbers[index + 1]) {
-                                        stock = numbers[index + 1];
-                                    }
-                    
-                                    break;
+                    }
+        
+                    if (invoice) break;
+                }
+                
+                let stock = '';
+        
+                for (const secondEntry of secondEntries) {
+                
+                    let matchIndex = -1;
+                
+                    for (let i = 0; i < secondEntry.length; i++) {
+                
+                        const line = secondEntry[i];
+                        const lower = line.toLowerCase();
+                
+                        const tMatch = line.match(/\b(\d{2}:\d{2}:\d{2})\b/);
+                        const lineTime = tMatch ? tMatch[1] : null;
+                
+                        if (lower.includes(med.toLowerCase()) &&
+                            lower.includes(name.toLowerCase()) &&
+                            lineTime
+                        ) {
+                            matchIndex = i;
+                            break;
+                        }
+                    }
+                
+                    if (matchIndex !== -1) {
+                
+                        for (let j = matchIndex; j < secondEntry.length; j++) {
+                
+                            const line = secondEntry[j];
+                
+                            const rowMatch = line.match(/(\d+)\.00\s+(\d+)\.00\s+(\d+)\.00/);
+                
+                            if (rowMatch) {
+                
+                                const values = [rowMatch[1], rowMatch[2], rowMatch[3]];
+                                const amtClean = String(amount).replace(/^0+/, '');
+                
+                                const index = values.indexOf(amtClean);
+                
+                                if (index !== -1 && values[index + 1]) {
+                                    stock = values[index + 1];
                                 }
+                
+                                break;
                             }
                         }
-                    
-                        if (stock) break;
                     }
+                
+                    if (stock) break;
                 }
-            }
-        }
-    }
-
-    if (invoice) break;
-}
                 
                 html += `
                     <tr>
 
                         <td style="color:#888; font-family:'JetBrains Mono', monospace;">
 
-    <div>${time || '-'}</div>
-
-    <button class="rowCopyBtn copybox"
-        data-invoice="${encodeURIComponent(invoice || '')}"
-        data-name="${encodeURIComponent(name || '')}"
-        data-address="${encodeURIComponent(address || '')}"
-        data-id="${encodeURIComponent(identification || '')}"
-        data-med="${encodeURIComponent(med || '')}"
-        data-amount="${encodeURIComponent(amount || '')}"
-        data-stock="${encodeURIComponent(stock || '')}"
-        onclick="copyRowFromBtn(this)">
-    </button>
-
-</td>
+                            <div>${time || '-'}</div>
+                        
+                            <button class="rowCopyBtn copybox"
+                                data-invoice="${encodeURIComponent(invoice || '')}"
+                                data-name="${encodeURIComponent(name || '')}"
+                                data-address="${encodeURIComponent(address || '')}"
+                                data-id="${encodeURIComponent(identification || '')}"
+                                data-med="${encodeURIComponent(med || '')}"
+                                data-amount="${encodeURIComponent(amount || '')}"
+                                data-stock="${encodeURIComponent(stock || '')}"
+                                onclick="copyRowFromBtn(this)">
+                            </button>
+                        
+                        </td>
 
                         <td>
                             <div class="copybox"
