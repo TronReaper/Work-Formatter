@@ -1003,15 +1003,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     let stock = '';
 
-                    function extractNumbers(line) {
-                        return [...line.matchAll(/(\d+)\.00/g)].map(m => m[1]);
+                    function timeToSeconds(t) {
+                        const [h, m, s] = t.split(':').map(Number);
+                        return h * 3600 + m * 60 + s;
                     }
+                    
+                    const baseTimeSec = timeToSeconds(time);
                     
                     for (const secondEntry of secondEntries) {
                     
                         let foundMed = false;
                         let foundName = false;
                         let matchedTime = false;
+                        let startReadingStock = false;
                     
                         for (let i = 0; i < secondEntry.length; i++) {
                     
@@ -1021,39 +1025,52 @@ document.addEventListener("DOMContentLoaded", () => {
                             const tMatch = line.match(/\b(\d{2}:\d{2}:\d{2})\b/);
                             const lineTime = tMatch ? tMatch[1] : null;
                     
-                            // STEP 1: MED match
+                            // 1. MED match
                             if (!foundMed && lower.includes(med.toLowerCase())) {
                                 foundMed = true;
+                                continue;
                             }
                     
-                            // STEP 2: NAME match (after MED found)
+                            // 2. NAME match (after MED)
                             if (foundMed && !foundName && lower.includes(name.toLowerCase())) {
                                 foundName = true;
+                                continue;
                             }
                     
-                            // STEP 3: TIME match (±2 sec)
+                            // 3. TIME match (±2 sec)
                             if (foundMed && foundName && lineTime) {
                     
                                 const lineTimeSec = timeToSeconds(lineTime);
-                                const baseTimeSec = timeToSeconds(time);
                     
                                 if (Math.abs(lineTimeSec - baseTimeSec) <= 2) {
                                     matchedTime = true;
                                 }
                             }
                     
-                            // STEP 4: STOCK extraction
+                            // 4. Once all prerequisites are matched → start searching AFTER THIS POINT
                             if (foundMed && foundName && matchedTime) {
+                                startReadingStock = true;
+                            }
                     
-                                const numbers = extractNumbers(line);
+                            // 5. ONLY AFTER match block → look for stock line
+                            if (startReadingStock) {
                     
-                                const amtIndex = numbers.indexOf(String(amount));
+                                const matches = line.match(/(\d+)\.00\s+(\d+)\.00\s+(\d+)\.00/);
                     
-                                if (amtIndex !== -1 && numbers[amtIndex + 1]) {
-                                    stock = numbers[amtIndex + 1];
+                                if (matches) {
+                    
+                                    const amountValue = String(amount).replace(/^0+/, '');
+                    
+                                    const nums = line.match(/(\d+)\.00/g)?.map(m => m.replace('.00','')) || [];
+                    
+                                    const index = nums.indexOf(amountValue);
+                    
+                                    if (index !== -1 && nums[index + 1]) {
+                                        stock = nums[index + 1];
+                                    }
+                    
+                                    break;
                                 }
-                    
-                                break;
                             }
                         }
                     
