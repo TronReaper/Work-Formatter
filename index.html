@@ -466,33 +466,34 @@ document.addEventListener("DOMContentLoaded", () => {
 
     input.focus();
 
-    function checkCode() {
+    function unlock() {
+
         const value = input.value.trim();
 
         if (value === SECRET) {
-            lockscreen.remove();
+
+            lockscreen.style.display = "none";
+
         } else {
+
             input.value = "";
         }
     }
 
-    // Desktop Enter key
+    // DESKTOP ENTER
     input.addEventListener("keydown", (e) => {
+
         if (e.key === "Enter") {
-            checkCode();
+            unlock();
         }
     });
 
-    // Mobile fallback (VERY IMPORTANT)
-    input.addEventListener("keyup", (e) => {
-        if (e.key === "Enter") {
-            checkCode();
-        }
-    });
+    // MOBILE SAFE DETECTION
+    input.addEventListener("input", () => {
 
-    // Extra mobile safety: some keyboards don't send Enter properly
-    input.addEventListener("change", () => {
-        // optional: only triggers when user "submits" field
+        if (input.value.trim() === SECRET) {
+            unlock();
+        }
     });
 
 });
