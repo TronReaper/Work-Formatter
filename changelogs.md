@@ -43,4 +43,13 @@
 
 - Fixed not giving SO because of 1-2 second delay in stock and supply tabs.
 
-- Made adjustments to layout to be more visually pleasing. 
+- Made adjustments to layout to be more visually pleasing.
+
+23/5/2026
+- Added the Almighty button. 
+
+- Fixed the button capturing the time. 
+
+- Added new category Stock that is not including in the button. 
+
+- Fixed Mobile support. 
