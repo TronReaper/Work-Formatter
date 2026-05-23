@@ -650,7 +650,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 decodeURIComponent(btn.dataset.address),
                 decodeURIComponent(btn.dataset.id),
                 decodeURIComponent(btn.dataset.med),
-                decodeURIComponent(btn.dataset.amount)
+                decodeURIComponent(btn.dataset.amount),
+                
+                // ✅ ONLY include stock if special med
+                ...(isSpecial ? [decodeURIComponent(btn.dataset.stock)] : [])
             ].join('\t');
             
             navigator.clipboard.writeText(rowData);
