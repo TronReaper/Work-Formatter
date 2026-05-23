@@ -666,27 +666,31 @@ document.addEventListener("DOMContentLoaded", () => {
             box.classList.toggle('show');
         }
 
-        function getStockFromFour00(secondEntry) {
-        
+        function getStockFromFour00(secondEntry, med, name) {
+
             let foundMed = false;
             let foundName = false;
             let count = 0;
+        
+            const medLower = (med || '').toLowerCase();
+            const nameLower = (name || '').toLowerCase();
         
             for (let i = 0; i < secondEntry.length; i++) {
         
                 const line = secondEntry[i];
                 const lower = line.toLowerCase();
         
-                // SAME STYLE AS INVOICE: anchor first
-                if (!foundMed && lower.includes(med.toLowerCase())) {
+                // STEP 1: anchor on med
+                if (!foundMed && lower.includes(medLower)) {
                     foundMed = true;
                 }
         
-                if (foundMed && !foundName && lower.includes(name.toLowerCase())) {
+                // STEP 2: anchor on name AFTER med
+                if (foundMed && !foundName && lower.includes(nameLower)) {
                     foundName = true;
                 }
         
-                // only start counting AFTER context is found
+                // STEP 3: only start counting AFTER both are found
                 if (foundName) {
         
                     const matches = line.match(/\d+\.00/g);
@@ -1073,7 +1077,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 
                     if (matchIndex !== -1) {
                 
-                        stock = getStockFromFour00(secondEntry, matchIndex);
+                        stock = getStockFromFour00(secondEntry, med, name);
                 
                     }
                 
