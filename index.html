@@ -959,9 +959,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
                 let invoice = '';
-                let stock = '';
                 
-
                 function timeToSeconds(t) {
                     const [h, m, s] = t.split(':').map(Number);
                     return h * 3600 + m * 60 + s;
@@ -999,7 +997,7 @@ document.addEventListener("DOMContentLoaded", () => {
         
                 if (invoiceMatch) {
         
-                     invoice = invoiceMatch[0];
+                    invoice = invoiceMatch[0];
 
                     let stock = '';
 
@@ -1014,9 +1012,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     
                         let foundMed = false;
                         let foundName = false;
-                        let matchedTime = false;
-                        let startReadingStock = false;
+                        let foundTime = false;
+                        let matchIndex = -1;
                     
+                        // 1. FIND MATCH POSITION FIRST
                         for (let i = 0; i < secondEntry.length; i++) {
                     
                             const line = secondEntry[i];
@@ -1025,48 +1024,45 @@ document.addEventListener("DOMContentLoaded", () => {
                             const tMatch = line.match(/\b(\d{2}:\d{2}:\d{2})\b/);
                             const lineTime = tMatch ? tMatch[1] : null;
                     
-                            // 1. MED match
                             if (!foundMed && lower.includes(med.toLowerCase())) {
                                 foundMed = true;
-                                continue;
                             }
                     
-                            // 2. NAME match (after MED)
                             if (foundMed && !foundName && lower.includes(name.toLowerCase())) {
                                 foundName = true;
-                                continue;
                             }
                     
-                            // 3. TIME match (±2 sec)
                             if (foundMed && foundName && lineTime) {
                     
                                 const lineTimeSec = timeToSeconds(lineTime);
                     
                                 if (Math.abs(lineTimeSec - baseTimeSec) <= 2) {
-                                    matchedTime = true;
+                                    foundTime = true;
+                                    matchIndex = i;
+                                    break;
                                 }
                             }
+                        }
                     
-                            // 4. Once all prerequisites are matched → start searching AFTER THIS POINT
-                            if (foundMed && foundName && matchedTime) {
-                                startReadingStock = true;
-                            }
+                        // 2. ONLY AFTER MATCH FOUND → SEARCH FOR STOCK BELOW IT
+                        if (matchIndex !== -1) {
                     
-                            // 5. ONLY AFTER match block → look for stock line
-                            if (startReadingStock) {
+                            for (let j = matchIndex; j < secondEntry.length; j++) {
+                    
+                                const line = secondEntry[j];
                     
                                 const matches = line.match(/(\d+)\.00\s+(\d+)\.00\s+(\d+)\.00/);
                     
                                 if (matches) {
                     
-                                    const amountValue = String(amount).replace(/^0+/, '');
+                                    const numbers = matches.slice(1); // [0, 29, 8]
                     
-                                    const nums = line.match(/(\d+)\.00/g)?.map(m => m.replace('.00','')) || [];
+                                    const amtClean = String(amount).replace(/^0+/, '');
                     
-                                    const index = nums.indexOf(amountValue);
+                                    const index = numbers.indexOf(amtClean);
                     
-                                    if (index !== -1 && nums[index + 1]) {
-                                        stock = nums[index + 1];
+                                    if (index !== -1 && numbers[index + 1]) {
+                                        stock = numbers[index + 1];
                                     }
                     
                                     break;
