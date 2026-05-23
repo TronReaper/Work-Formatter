@@ -755,6 +755,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             <th>IDENTIFICATION</th>
                             <th>MED</th>
                             <th>AMOUNT</th>
+                            <th>STOCK</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -955,9 +956,12 @@ break;
 
                 // INVOICE LOOKUP
 
-let invoice = '';
+
+                let invoice = '';
+                let stock = '';
                 
-function timeToSeconds(t) {
+
+                function timeToSeconds(t) {
     const [h, m, s] = t.split(':').map(Number);
     return h * 3600 + m * 60 + s;
 }
@@ -993,7 +997,20 @@ for (const secondEntry of secondEntries) {
         const invoiceMatch = line.match(/SO\/[\w/]+/);
 
         if (invoiceMatch) {
-            invoice = invoiceMatch[0];
+
+             invoice = invoiceMatch[0];
+
+            // Find stock number AFTER amount
+            const stockMatches =
+                [...line.matchAll(/(\d+)\.00/g)];
+
+            // amount is first
+            // stock is second
+
+            if (stockMatches[1]) {
+                stock = stockMatches[1][1];
+            }
+
             break;
         }
     }
@@ -1017,6 +1034,7 @@ for (const secondEntry of secondEntries) {
         data-id="${encodeURIComponent(identification || '')}"
         data-med="${encodeURIComponent(med || '')}"
         data-amount="${encodeURIComponent(amount || '')}"
+        data-stock="${encodeURIComponent(stock || '')}"
         onclick="copyRowFromBtn(this)">
     </button>
 
@@ -1069,7 +1087,14 @@ for (const secondEntry of secondEntries) {
                                 ${amount || '-'}
                             </div>
                         </td>
-
+                        
+                        <td>
+                            <div class="copybox"
+                                data-copy="${encodeURIComponent(stock)}"
+                                 onclick="copyText(this)">
+                                ${stock || '-'}
+                            </div>
+                        </td>
                     </tr>
                 `;
             });
