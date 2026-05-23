@@ -652,7 +652,6 @@ document.addEventListener("DOMContentLoaded", () => {
         function copyRowFromBtn(btn) {
 
     const rowData = [
-        decodeURIComponent(btn.dataset.time),
         decodeURIComponent(btn.dataset.invoice),
         decodeURIComponent(btn.dataset.name),
         decodeURIComponent(btn.dataset.address),
@@ -1018,7 +1017,6 @@ for (const secondEntry of secondEntries) {
     <div>${time || '-'}</div>
 
     <button class="rowCopyBtn"
-        data-time="${encodeURIComponent(time || '')}"
         data-invoice="${encodeURIComponent(invoice || '')}"
         data-name="${encodeURIComponent(name || '')}"
         data-address="${encodeURIComponent(address || '')}"
