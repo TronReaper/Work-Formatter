@@ -1001,19 +1001,26 @@ for (const secondEntry of secondEntries) {
 
             let stock = '';
 
-// get all .00 numbers from the SAME LINE
-const matches = [...line.matchAll(/(\d+)\.00/g)];
-const values = matches.map(m => m[1]);
+// ---------------- STOCK (FINAL FIX) ----------------
 
-// normalize amount (VERY IMPORTANT)
-const amt = String(amount).replace(/^0+/, '').trim();
+// grab all numbers like 0.00 / 7.00 / 918.00
+const matches = [...line.matchAll(/(\d+)\.00/g)]
+    .map(m => m[1]);
 
-// find exact match position
-const index = values.findIndex(v => v === amt);
+// normalize amount safely
+const amt = parseInt(amount, 10);
 
-// stock is next value AFTER amount
-if (index !== -1 && index + 1 < values.length) {
-    stock = values[index + 1];
+// convert all to numbers for reliable matching
+const nums = matches.map(n => parseInt(n, 10));
+
+// find index of amount
+const index = nums.indexOf(amt);
+
+// stock is next number after amount
+if (index !== -1 && nums[index + 1] !== undefined) {
+    stock = nums[index + 1].toString();
+} else {
+    stock = '';
 }
     }
         }
