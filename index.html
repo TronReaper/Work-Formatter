@@ -697,8 +697,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 return h * 3600 + m * 60 + s;
             }
         
-            for (const entry of secondEntries) {
-        
+            for (let entryIndex = 0; entryIndex < secondEntries.length; entryIndex++) {
+
+                const entry = secondEntries[entryIndex];
                 let foundMed = false;
                 let foundName = false;
                 let localTimeMatch = false;
