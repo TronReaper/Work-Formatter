@@ -744,7 +744,9 @@ document.addEventListener("DOMContentLoaded", () => {
                                 count++;
         
                                 if (count === 4) {
-                                    m.split('.')[0].replace(/,/g, '');
+
+                                    const stock =
+                                        m.split('.')[0].replace(/,/g, '');
 
                                     // UNIQUE KEY
                                     const uniqueKey =
