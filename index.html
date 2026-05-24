@@ -900,6 +900,15 @@
                 const lines = raw
                     .split('\n')
                     .map(cleanLine);
+
+                const processedByIndex = lines.findIndex(line =>
+                    line.toLowerCase().includes('processed by')
+                );
+                
+                if (processedByIndex !== -1) {
+                
+                    lines = lines.slice(processedByIndex + 1);
+                }
     
                 const entries = [];
     
