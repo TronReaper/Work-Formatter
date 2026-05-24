@@ -1114,14 +1114,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (invoice) break;
                 }
 
-                let stock = '';
-
-                for (const secondEntry of secondEntries) {
-                
-                    stock = getStockFromFour00(secondEntries, med, name, baseTimeSec);
-                
-                    if (stock) break;
-                }
+                const stock = getStockFromFour00(secondEntries, med, name, baseTimeSec);
                 
                 html += `
                     <tr>
