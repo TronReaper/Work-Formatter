@@ -50,6 +50,14 @@
 
 - Fixed the button capturing the time. 
 
-- Added new category Stock that is not including in the button. 
+- Added new category Stock that is not included when using the button. 
 
-- Fixed Mobile support. 
+- Fixed Mobile support.
+
+24/5/2026
+- Succefully added stock to the button for certain entries.
+
+- Fixed stock not formatting correct if there are more than 1 entries with the same prerequisites.
+  (This took me 2 hours to fix.)
+
+- Added date support, not included in the button if invalid format.
