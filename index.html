@@ -1118,17 +1118,6 @@ stock = getStockFromFour00(
 if (stock) {
     stockMatchTracker.set(key, occurrenceIndex + 1);
 }
-// 2. convert matchCount → offset multiplier
-let occurrenceIndex = Math.max(0, matchCount - 1);
-
-// 3. compute stock using correct offset rule
-stock = getStockFromFour00(
-    secondEntries,
-    med,
-    name,
-    baseTimeSec,
-    occurrenceIndex
-);
                 
                 html += `
                     <tr>
