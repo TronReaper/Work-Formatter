@@ -777,6 +777,8 @@ document.addEventListener("DOMContentLoaded", () => {
             "apo-alpraz"
         ];
 
+        const stockMatchCount = {};
+
         function formatEntries() {
 
             const raw = document.getElementById('input').value;
@@ -1096,7 +1098,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 for (const secondEntry of secondEntries) {
                 
-                    stock = getStockFromFour00(secondEntries, med, name, baseTimeSec);
+                    const key = `${med.toLowerCase()}|${name.toLowerCase()}|${time}`;
+
+                    stockMatchCount[key] = (stockMatchCount[key] || 0) + 1;
+
+                    const occurrenceIndex = stockMatchCount[key];
+
+                    stock = getStockFromFour00(
+                        secondEntries,
+                        med,
+                        name,
+                        baseTimeSec,
+                        (occurrenceIndex - 1) * 4
+                    );
                 
                     if (stock) break;
                 }
