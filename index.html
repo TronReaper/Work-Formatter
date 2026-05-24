@@ -737,35 +737,35 @@ document.addEventListener("DOMContentLoaded", () => {
             // FIND STOCK
             if (foundName && localTimeMatch) {
 
-                const matches = line.match(/[\d,]+\.\d{2}/g);
+    const matches = line.match(/[\d,]+\.\d{2}/g);
 
-                if (matches) {
+    if (!matches) continue;
 
-                    for (const m of matches) {
+    const stocks = [];
 
-                        count++;
+    for (const m of matches) {
 
-                        if (count === 4) {
+        const stock = m.split('.')[0].replace(/,/g, '');
 
-                            const stock =
-                                m.split('.')[0].replace(/,/g, '');
+        stocks.push(stock);
+    }
 
-                            // UNIQUE KEY
-                            const uniqueKey =
-                                `${medLower}|${nameLower}|${baseTimeSec}|${entryIndex}`;
+    // return SECOND stock only
+    if (stocks.length >= 2) {
 
-                            // SKIP if already used
-                            if (usedStockMatches.has(uniqueKey)) {
-                                continue;
-                            }
+        const stock = stocks[1];
 
-                            // MARK AS USED
-                            usedStockMatches.add(uniqueKey);
+        const uniqueKey =
+            `${medLower}|${nameLower}|${baseTimeSec}|${stock}|${entryIndex}`;
 
-                            return stock;
-                        }
-                    }
-                }
+        if (usedStockMatches.has(uniqueKey)) {
+            continue;
+        }
+
+        usedStockMatches.add(uniqueKey);
+
+        return stock;
+    }
             }
         }
     }
