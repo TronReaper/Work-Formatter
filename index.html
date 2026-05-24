@@ -730,7 +730,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
-        const targetIndex = offset + 3; // 4th item in each group of 4
+        const targetIndex = offset; // 4th item in each group of 4
 
         if (matches[targetIndex]) {
             return matches[targetIndex]
@@ -1079,14 +1079,29 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (invoice) break;
                 }
 
-                let stock = '';
-
-                for (const secondEntry of secondEntries) {
-                
-                    stock = getStockFromFour00(secondEntries, med, name, baseTimeSec, 0);
-                
-                    if (stock) break;
+                // TRACK HOW MANY TIMES THIS SAME ENTRY HAS BEEN USED
+                if (!window.stockUsageMap) {
+                    window.stockUsageMap = new Map();
                 }
+
+                const key = time + '|' + name + '|' + med;
+
+                const usageCount = window.stockUsageMap.get(key) || 0;
+
+                // 0 → 4th .00
+                // 1 → 8th .00
+                // 2 → 12th .00
+                const offset = usageCount * 4;
+
+                let stock = getStockFromFour00(
+                    secondEntries,
+                    med,
+                    name,
+                    baseTimeSec,
+                    offset
+                );
+
+                window.stockUsageMap.set(key, usageCount + 1);
                 
                 html += `
                     <tr>
