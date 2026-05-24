@@ -736,18 +736,20 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (foundName && localTimeMatch) {
         
                         const matches = line.match(/[\d,]+\.\d{2}/g);
-        
-                        if (matches) {
-        
-                            for (const m of matches) {
-        
-                                count++;
-        
-                                if (count === 4) {
-                                    return m.split('.')[0].replace(/,/g, '');
-                                }
-                            }
-                        }
+
+if (matches) {
+
+    for (const m of matches) {
+
+        count++;
+
+        const target = offset + 4; // 4th, 8th, 12th...
+
+        if (count === target) {
+            return m.split('.')[0].replace(/,/g, '');
+        }
+    }
+}
                     }
                 }
             }
