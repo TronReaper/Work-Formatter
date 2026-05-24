@@ -653,7 +653,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 decodeURIComponent(btn.dataset.name),
                 decodeURIComponent(btn.dataset.address),
                 decodeURIComponent(btn.dataset.id),
-                decodeURIComponent(btn.dataset.med),
+                
+                isSpecial
+                    ? ''
+                    : decodeURIComponent(btn.dataset.med),
                 decodeURIComponent(btn.dataset.amount),
                 
                 // ✅ ONLY include stock if special med
