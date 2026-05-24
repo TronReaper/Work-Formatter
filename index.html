@@ -569,7 +569,7 @@
         <!-- DATE INPUT -->
     
         <div style="
-            margin-top:20px;
+            margin-top:10px;
             margin-bottom:10px;
             max-width:220px;
         ">
@@ -902,14 +902,13 @@
                     .map(cleanLine);
 
                 const processedByIndex = lines.findIndex(line =>
-                    line.toLowerCase().includes('processed by')
+                    line.toLowerCase().replace(/\s+/g, ' ').includes('processed by')
                 );
                 
                 if (processedByIndex !== -1) {
-                
                     lines = lines.slice(processedByIndex + 1);
                 }
-    
+                
                 const entries = [];
     
                 let currentEntry = [];
