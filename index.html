@@ -752,11 +752,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
                             // UNIQUE KEY
                             const uniqueKey =
-                                `${medLower}|${nameLower}|${baseTimeSec}|${stock}|${entryIndex}`;
+                                `${medLower}|${nameLower}|${baseTimeSec}|${entryIndex}`;
 
                             // SKIP if already used
                             if (usedStockMatches.has(uniqueKey)) {
-                                break;
+                                continue;
                             }
 
                             // MARK AS USED
