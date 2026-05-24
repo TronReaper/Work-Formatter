@@ -1093,26 +1093,52 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (invoice) break;
                 }
 
-                // ===============================
-// STOCK (with occurrence offset)
-// ===============================
+                let stock = '';
 
-if (!window.stockOccurrenceMap) {
-    window.stockOccurrenceMap = new Map();
+// 1. find ALL real matches first (STRICT match list)
+let matchCount = 0;
+
+for (const entry of secondEntries) {
+
+    let foundMed = false;
+    let foundName = false;
+    let matched = false;
+
+    for (let i = 0; i < entry.length; i++) {
+
+        const line = entry[i];
+        const lower = line.toLowerCase();
+
+        const tMatch = line.match(/\b(\d{2}:\d{2}:\d{2})\b/);
+        const lineTime = tMatch ? tMatch[1] : null;
+
+        if (!foundMed && lower.includes(med.toLowerCase())) {
+            foundMed = true;
+        }
+
+        if (foundMed && !foundName && lower.includes(name.toLowerCase())) {
+            foundName = true;
+        }
+
+        if (foundName && lineTime) {
+
+            const lineTimeSec = timeToSeconds(lineTime);
+
+            if (Math.abs(lineTimeSec - baseTimeSec) <= 2) {
+                matched = true;
+                break;
+            }
+        }
+    }
+
+    if (matched) matchCount++;
 }
 
-const key = `${med}|${name}|${baseTimeSec}`;
+// 2. convert matchCount → offset multiplier
+let occurrenceIndex = Math.max(0, matchCount - 1);
 
-if (!window.stockOccurrenceMap.has(key)) {
-    window.stockOccurrenceMap.set(key, 0);
-}
-
-const occurrenceIndex = window.stockOccurrenceMap.get(key);
-
-// 0 = first, 1 = second, 2 = third...
-window.stockOccurrenceMap.set(key, occurrenceIndex + 1);
-
-const stock = getStockFromFour00(
+// 3. compute stock using correct offset rule
+stock = getStockFromFour00(
     secondEntries,
     med,
     name,
