@@ -744,7 +744,21 @@ document.addEventListener("DOMContentLoaded", () => {
                                 count++;
         
                                 if (count === 4) {
-                                    return m.split('.')[0].replace(/,/g, '');
+                                    m.split('.')[0].replace(/,/g, '');
+
+                                    // UNIQUE KEY
+                                    const uniqueKey =
+                                        `${medLower}|${nameLower}|${baseTimeSec}|${stock}|${entryIndex}`;
+
+                                    // SKIP if already used
+                                    if (usedStockMatches.has(uniqueKey)) {
+                                        break;
+                                    }
+
+                                    // MARK AS USED
+                                    usedStockMatches.add(uniqueKey);
+
+                                    return stock;
                                 }
                             }
                         }
@@ -772,12 +786,16 @@ document.addEventListener("DOMContentLoaded", () => {
             "stillnox"
         ];
 
+        const usedStockMatches = new Set();
+        
         const specialMedExactMatch = [
             "alprazolam",
             "apo-alpraz"
         ];
 
         function formatEntries() {
+
+            usedStockMatches.clear();
 
             const raw = document.getElementById('input').value;
 
