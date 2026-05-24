@@ -681,7 +681,7 @@ document.addEventListener("DOMContentLoaded", () => {
             box.classList.toggle('show');
         }
 
-        function getStockFromFour00(secondEntries, med, name, baseTimeSec) {
+        function getStockFromFour00(secondEntries, med, name, baseTimeSec, occurrenceIndex = 0) {
 
             const normalize = (str) =>
                 (str || '')
@@ -702,6 +702,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 let foundMed = false;
                 let foundName = false;
                 let localTimeMatch = false;
+                let countTarget = 4 * (occurrenceIndex + 1);
                 let count = 0;
         
                 for (let i = 0; i < entry.length; i++) {
@@ -743,7 +744,7 @@ document.addEventListener("DOMContentLoaded", () => {
         
                                 count++;
         
-                                if (count === 4) {
+                                if (count === countTarget) {
                                     return m.split('.')[0].replace(/,/g, '');
                                 }
                             }
@@ -1092,14 +1093,32 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (invoice) break;
                 }
 
-                let stock = '';
+                // ===============================
+// STOCK (with occurrence offset)
+// ===============================
 
-                for (const secondEntry of secondEntries) {
-                
-                    stock = getStockFromFour00(secondEntries, med, name, baseTimeSec);
-                
-                    if (stock) break;
-                }
+if (!window.stockOccurrenceMap) {
+    window.stockOccurrenceMap = new Map();
+}
+
+const key = `${med}|${name}|${baseTimeSec}`;
+
+if (!window.stockOccurrenceMap.has(key)) {
+    window.stockOccurrenceMap.set(key, 0);
+}
+
+const occurrenceIndex = window.stockOccurrenceMap.get(key);
+
+// 0 = first, 1 = second, 2 = third...
+window.stockOccurrenceMap.set(key, occurrenceIndex + 1);
+
+const stock = getStockFromFour00(
+    secondEntries,
+    med,
+    name,
+    baseTimeSec,
+    occurrenceIndex
+);
                 
                 html += `
                     <tr>
