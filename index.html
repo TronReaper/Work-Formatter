@@ -464,46 +464,46 @@
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-
-    const SECRET = "BSM321";
-
-    const input = document.getElementById("codeInput");
-    const lockscreen = document.getElementById("lockscreen");
-
-    input.focus();
-
-    function unlock() {
-
-        const value = input.value.trim();
-
-        if (value === SECRET) {
-
-            lockscreen.style.display = "none";
-
-        } else {
-
-            input.value = "";
+    document.addEventListener("DOMContentLoaded", () => {
+    
+        const SECRET = "BSM321";
+    
+        const input = document.getElementById("codeInput");
+        const lockscreen = document.getElementById("lockscreen");
+    
+        input.focus();
+    
+        function unlock() {
+    
+            const value = input.value.trim();
+    
+            if (value === SECRET) {
+    
+                lockscreen.style.display = "none";
+    
+            } else {
+    
+                input.value = "";
+            }
         }
-    }
-
-    // DESKTOP ENTER
-    input.addEventListener("keydown", (e) => {
-
-        if (e.key === "Enter") {
-            unlock();
-        }
+    
+        // DESKTOP ENTER
+        input.addEventListener("keydown", (e) => {
+    
+            if (e.key === "Enter") {
+                unlock();
+            }
+        });
+    
+        // MOBILE SAFE DETECTION
+        input.addEventListener("input", () => {
+    
+            if (input.value.trim() === SECRET) {
+                unlock();
+            }
+        });
+    
     });
-
-    // MOBILE SAFE DETECTION
-    input.addEventListener("input", () => {
-
-        if (input.value.trim() === SECRET) {
-            unlock();
-        }
-    });
-
-});
 </script>
 <body>
 
@@ -565,6 +565,57 @@ document.addEventListener("DOMContentLoaded", () => {
             Changelogs
         </button>
 
+    </div>
+
+    <!-- DATE INPUT -->
+
+    <div style="
+        margin-top:20px;
+        margin-bottom:10px;
+        max-width:220px;
+    ">
+        
+        <div style="
+            font-size:12px;
+            color:#888;
+            margin-bottom:6px;
+            font-family:'Space Grotesk', sans-serif;
+            letter-spacing:0.6px;
+        ">
+            DATE
+        </div>
+    
+        <input
+            id="dateInput"
+            placeholder="DD/MM/YYYY"
+            oninput="validateDateInput(this)"
+            style="
+                width:100%;
+                background:#171717;
+                color:white;
+                border:1px solid #2b2b2b;
+                border-radius:12px;
+                padding:10px 12px;
+                font-size:13px;
+                font-family:'JetBrains Mono', monospace;
+                outline:none;
+                transition:0.15s ease;
+            "
+        >
+    
+        <div
+            id="dateError"
+            style="
+                margin-top:6px;
+                font-size:11px;
+                color:#ff5c5c;
+                display:none;
+                font-family:'Inter', sans-serif;
+            "
+        >
+            Invalid date
+        </div>
+    
     </div>
 
     <!-- OUTPUT -->
@@ -644,11 +695,68 @@ document.addEventListener("DOMContentLoaded", () => {
             }, 500);
         }
 
+        function validateDateInput(input) {
+
+            const value = input.value.trim();
+        
+            const error =
+                document.getElementById("dateError");
+        
+            // DD/MM/YYYY
+            const regex =
+                /^(\d{2})\/(\d{2})\/(\d{4})$/;
+        
+            const match = value.match(regex);
+        
+            let valid = false;
+        
+            if (match) {
+        
+                const day = parseInt(match[1], 10);
+                const month = parseInt(match[2], 10);
+                const year = parseInt(match[3], 10);
+        
+                const date =
+                    new Date(year, month - 1, day);
+        
+                valid =
+                    date.getFullYear() === year &&
+                    date.getMonth() === month - 1 &&
+                    date.getDate() === day;
+            }
+        
+            if (!value || valid) {
+        
+                input.style.borderColor = "#2b2b2b";
+        
+                error.style.display = "none";
+        
+            } else {
+        
+                input.style.borderColor = "#ff4d4d";
+        
+                error.style.display = "block";
+            }
+        
+            return valid;
+        }
+
         function copyRowFromBtn(btn) {
 
             const isSpecial = btn.dataset.isspecial === "true";
 
+            const dateInput =
+                document.getElementById("dateInput");
+        
+            const hasValidDate =
+                validateDateInput(dateInput);
+        
+            const dateValue =
+                dateInput.value.trim();
+
             const rowData = [
+                ...(hasValidDate ? [dateValue] : []),
+                
                 decodeURIComponent(btn.dataset.invoice),
                 decodeURIComponent(btn.dataset.name),
                 decodeURIComponent(btn.dataset.address),
@@ -1099,25 +1207,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 let stock = '';
 
-// create unique key for THIS exact entry
-const key = `${med.toLowerCase()}|${name.toLowerCase()}|${baseTimeSec}`;
-
-// get how many times we've already seen this exact combo
-let occurrenceIndex = stockMatchTracker.get(key) || 0;
-
-// run stock extraction using correct offset
-stock = getStockFromFour00(
-    secondEntries,
-    med,
-    name,
-    baseTimeSec,
-    occurrenceIndex
-);
-
-// ONLY increment if match actually exists in data
-if (stock) {
-    stockMatchTracker.set(key, occurrenceIndex + 1);
-}
+                // create unique key for THIS exact entry
+                const key = `${med.toLowerCase()}|${name.toLowerCase()}|${baseTimeSec}`;
+                
+                // get how many times we've already seen this exact combo
+                let occurrenceIndex = stockMatchTracker.get(key) || 0;
+                
+                // run stock extraction using correct offset
+                stock = getStockFromFour00(
+                    secondEntries,
+                    med,
+                    name,
+                    baseTimeSec,
+                    occurrenceIndex
+                );
+                
+                // ONLY increment if match actually exists in data
+                if (stock) {
+                    stockMatchTracker.set(key, occurrenceIndex + 1);
+                }
                 
                 html += `
                     <tr>
