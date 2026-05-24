@@ -743,6 +743,8 @@ document.addEventListener("DOMContentLoaded", () => {
                             for (const m of matches) {
         
                                 count++;
+
+                                
         
                                 if (count === countTarget) {
                                     return m.split('.')[0].replace(/,/g, '');
@@ -777,6 +779,8 @@ document.addEventListener("DOMContentLoaded", () => {
             "alprazolam",
             "apo-alpraz"
         ];
+
+        const stockMatchTracker = new Map();
 
         function formatEntries() {
 
@@ -1095,45 +1099,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 let stock = '';
 
-// 1. find ALL real matches first (STRICT match list)
-let matchCount = 0;
+// create unique key for THIS exact entry
+const key = `${med.toLowerCase()}|${name.toLowerCase()}|${baseTimeSec}`;
 
-for (const entry of secondEntries) {
+// get how many times we've already seen this exact combo
+let occurrenceIndex = stockMatchTracker.get(key) || 0;
 
-    let foundMed = false;
-    let foundName = false;
-    let matched = false;
+// run stock extraction using correct offset
+stock = getStockFromFour00(
+    secondEntries,
+    med,
+    name,
+    baseTimeSec,
+    occurrenceIndex
+);
 
-    for (let i = 0; i < entry.length; i++) {
-
-        const line = entry[i];
-        const lower = line.toLowerCase();
-
-        const tMatch = line.match(/\b(\d{2}:\d{2}:\d{2})\b/);
-        const lineTime = tMatch ? tMatch[1] : null;
-
-        if (!foundMed && lower.includes(med.toLowerCase())) {
-            foundMed = true;
-        }
-
-        if (foundMed && !foundName && lower.includes(name.toLowerCase())) {
-            foundName = true;
-        }
-
-        if (foundName && lineTime) {
-
-            const lineTimeSec = timeToSeconds(lineTime);
-
-            if (Math.abs(lineTimeSec - baseTimeSec) <= 2) {
-                matched = true;
-                break;
-            }
-        }
-    }
-
-    if (matched) matchCount++;
+// ONLY increment if match actually exists in data
+if (stock) {
+    stockMatchTracker.set(key, occurrenceIndex + 1);
 }
-
 // 2. convert matchCount → offset multiplier
 let occurrenceIndex = Math.max(0, matchCount - 1);
 
