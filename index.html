@@ -1,1328 +1,1048 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Work Formatter</title>
     
-        <meta name="viewport"
-              content="width=device-width, initial-scale=1.0">
+<head>
+    <title>Work Formatter</title>
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <!-- FONTS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <style>
     
-        <!-- FONTS -->
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        * {
+            box-sizing: border-box;
+        }
     
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+        html {
+            scroll-behavior: smooth;
+        }
     
-        <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0f0f10;
+            color: #f2f2f2;
+            padding: 22px;
+            margin: 0;
+            line-height: 1.5;
+        }
+    
+        /* TOP */
+    
+        .topSection {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 22px;
+            text-align: center;
+        }
+        #lastUpdated {
+            color: #7d7d7d;
+            font-size: 12px;
+            margin-bottom: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 0.3px;
+        }
+    
+        h1 {
+            margin: 0;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 38px;
+            font-weight: 700;
+            letter-spacing: -1px;
+            color: #ffffff;
+        }
+    
+        /* INPUT */
+    
+        textarea {
+            width: 100%;
+            min-height: 260px;
+            background: #171717;
+            color: #f5f5f5;
+            border: 1px solid #2b2b2b;
+            border-radius: 16px;
+            padding: 16px;
+            font-size: 13px;
+            line-height: 1.6;
+            font-family: 'JetBrains Mono', monospace;
+            resize: vertical;
+            transition: 0.2s ease;
+            outline: none;
+        }
+    
+        textarea:focus {
+            border-color: #4a4a4a;
+            background: #1b1b1b;
+        }
+    
+        textarea::placeholder {
+            color: #777;
+        }
+    
+        /* BUTTONS */
+    
+        .buttonRow {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 14px;
+            margin-top: 16px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+        }
+    
+        .mainButton {
+            background: #ffffff;
+            color: #111;
+            border: none;
+            border-radius: 12px;
+            padding: 11px 18px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.18s ease;
+            font-family: 'Inter', sans-serif;
+        }
+    
+        .mainButton:hover {
+            transform: translateY(-1px);
+            opacity: 0.93;
+        }
+    
+        .mainButton:active {
+            transform: scale(0.98);
+        }
+    
+        .changelogBtn {
+            background: none;
+            border: none;
+            color: #9c9c9c;
+            cursor: pointer;
+            font-size: 13px;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            transition: 0.15s ease;
+        }
+    
+        .changelogBtn:hover {
+            color: white;
+        }
+    
+        /* OUTPUT */
+    
+        #output {
+            margin-top: 24px;
+            overflow-x: auto;
+            border-radius: 16px;
+        }
+    
+        /* TABLE */
+    
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            min-width: 950px;
+            overflow: hidden;
+            border: 1px solid #252525;
+            border-radius: 16px;
+        }
+    
+        thead {
+            position: sticky;
+            top: 0;
+        }
+    
+        th {
+            background: #181818;
+            color: #dcdcdc;
+            padding: 14px 12px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.8px;
+            font-family: 'Space Grotesk', sans-serif;
+            border-bottom: 1px solid #2b2b2b;
+        }
+    
+        td {
+            background: #131313;
+            border-bottom: 1px solid #232323;
+            padding: 14px 10px;
+            vertical-align: middle;
+            font-size: 13px;
+        }
+    
+        tr:hover td {
+            background: #171717;
+        }
         
-            * {
-                box-sizing: border-box;
-            }
+        td:nth-child(2),
+        td:nth-child(5) {
+            white-space: nowrap;
+        }
+    
+        /* TIME COLUMN */
+    
+        td:first-child {
+            color: #8e8e8e;
+            font-family: 'JetBrains Mono', monospace;
+            white-space: nowrap;
+            width: 90px;
+        }
+    
+        /* COPY BOX */
+    
+        .copybox {
+            background: #1f1f1f;
+            border: 1px solid #2a2a2a;
+            padding: 9px 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.15s ease;
+            word-break: break-word;
+        }
         
-            html {
-                scroll-behavior: smooth;
-            }
+        td:nth-child(2) .copybox,
+        td:nth-child(5) .copybox {
+            white-space: nowrap;
+            width: 100%;
+            display: inline-block;
+        }
+    
+        .copybox:hover {
+            background: #272727;
+            border-color: #3a3a3a;
+        }
+    
+        .copybox:active {
+            transform: scale(0.99);
+        }
+    
+        .copied {
+            outline: 2px solid #00cc66 !important;
+        }
+        .copybox.copyperm  {
+            background: #404040 !important;
+            border: 1px solid #575757 !important;
+        }
+
+        .copybox.med-special {
+            background: #3a2a1a; 
+            outline: 1px solid #ffb347;
+        }
+    
+        /* MODAL */
+    
+        #changelogModal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.72);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(6px);
+            z-index: 999;
         
+            /* animation */
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+        }
+        
+        #changelogModal.show {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+    
+        .modalBox {
+            background: #161616;
+            width: 430px;
+            max-width: 92%;
+            height: 340px;
+            border-radius: 20px;
+            padding: 18px;
+            position: relative;
+            border: 1px solid #2b2b2b;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.45);
+        }
+    
+        .closeBtn {
+            position: absolute;
+            top: 12px;
+            right: 15px;
+            cursor: pointer;
+            font-size: 17px;
+            color: #8d8d8d;
+            transition: 0.15s ease;
+        }
+    
+        .closeBtn:hover {
+            color: white;
+        }
+    
+        #changelogContent {
+            white-space: pre-wrap;
+            overflow-y: auto;
+            height: 255px;
+            background: #101010;
+            border: 1px solid #2a2a2a;
+            border-radius: 12px;
+            padding: 14px;
+            margin-top: 14px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            color: #d8d8d8;
+        }
+        /*second button*/
+        .hiddenBox {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transform: translateY(-8px);
+            transition:
+                max-height 0.25s ease,
+                opacity 0.2s ease,
+                transform 0.2s ease,
+                margin-top 0.25s ease;
+        }
+        
+        .hiddenBox.show {
+            max-height: 400px;
+            opacity: 1;
+            transform: translateY(0);
+            margin-top: 14px;
+        }
+        
+        .secondaryButton {
+            background: #1d1d1d;
+            color: #f2f2f2;
+            border: 1px solid #303030;
+        }
+        
+        .secondaryButton:hover {
+            background: #252525;
+        }
+        /* SCROLLBAR */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+    
+        ::-webkit-scrollbar-track {
+            background: #111;
+        }
+    
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 20px;
+        }
+    
+        ::-webkit-scrollbar-thumb:hover {
+            background: #444;
+        }
+    
+        /* MOBILE */
+    
+        @media (max-width: 768px) {
+    
             body {
-                font-family: 'Inter', sans-serif;
-                background: #0f0f10;
-                color: #f2f2f2;
-                padding: 22px;
-                margin: 0;
-                line-height: 1.5;
+                padding: 12px;
             }
-        
-            /* TOP */
-        
-            .topSection {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                margin-bottom: 22px;
-                text-align: center;
-            }
-            #lastUpdated {
-                color: #7d7d7d;
-                font-size: 12px;
-                margin-bottom: 8px;
-                font-family: 'JetBrains Mono', monospace;
-                letter-spacing: 0.3px;
-            }
-        
+    
             h1 {
-                margin: 0;
-                font-family: 'Space Grotesk', sans-serif;
-                font-size: 38px;
-                font-weight: 700;
-                letter-spacing: -1px;
-                color: #ffffff;
+                font-size: 28px;
             }
-        
-            /* INPUT */
-        
+    
+            #lastUpdated {
+                font-size: 11px;
+            }
+    
             textarea {
-                width: 100%;
-                min-height: 260px;
-                background: #171717;
-                color: #f5f5f5;
-                border: 1px solid #2b2b2b;
-                border-radius: 16px;
-                padding: 16px;
-                font-size: 13px;
-                line-height: 1.6;
-                font-family: 'JetBrains Mono', monospace;
-                resize: vertical;
-                transition: 0.2s ease;
-                outline: none;
+                min-height: 180px;
+                padding: 13px;
+                font-size: 12px;
+                border-radius: 14px;
             }
-        
-            textarea:focus {
-                border-color: #4a4a4a;
-                background: #1b1b1b;
-            }
-        
-            textarea::placeholder {
-                color: #777;
-            }
-        
-            /* BUTTONS */
-        
+    
             .buttonRow {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                gap: 14px;
-                margin-top: 16px;
-                margin-bottom: 18px;
-                flex-wrap: wrap;
+                flex-direction: column;
+                gap: 10px;
+                width: 100%;
             }
-        
+    
             .mainButton {
-                background: #ffffff;
-                color: #111;
-                border: none;
-                border-radius: 12px;
-                padding: 11px 18px;
+                width: 100%;
+                padding: 12px;
                 font-size: 14px;
-                font-weight: 600;
-                cursor: pointer;
-                transition: 0.18s ease;
-                font-family: 'Inter', sans-serif;
             }
-        
-            .mainButton:hover {
-                transform: translateY(-1px);
-                opacity: 0.93;
-            }
-        
-            .mainButton:active {
-                transform: scale(0.98);
-            }
-        
+    
             .changelogBtn {
-                background: none;
-                border: none;
-                color: #9c9c9c;
-                cursor: pointer;
-                font-size: 13px;
-                padding: 0;
-                font-family: 'Inter', sans-serif;
-                transition: 0.15s ease;
+                font-size: 12px;
             }
-        
-            .changelogBtn:hover {
-                color: white;
-            }
-        
-            /* OUTPUT */
-        
-            #output {
-                margin-top: 24px;
-                overflow-x: auto;
-                border-radius: 16px;
-            }
-        
-            /* TABLE */
-        
+    
             table {
-                width: 100%;
-                border-collapse: separate;
-                border-spacing: 0;
-                min-width: 950px;
-                overflow: hidden;
-                border: 1px solid #252525;
-                border-radius: 16px;
+                min-width: 850px;
             }
-        
-            thead {
-                position: sticky;
-                top: 0;
-            }
-        
+    
             th {
-                background: #181818;
-                color: #dcdcdc;
-                padding: 14px 12px;
-                text-align: left;
-                font-size: 12px;
-                font-weight: 600;
-                letter-spacing: 0.8px;
-                font-family: 'Space Grotesk', sans-serif;
-                border-bottom: 1px solid #2b2b2b;
+                font-size: 11px;
+                padding: 10px;
             }
-        
+    
             td {
-                background: #131313;
-                border-bottom: 1px solid #232323;
-                padding: 14px 10px;
-                vertical-align: middle;
-                font-size: 13px;
+                font-size: 11px;
+                padding: 8px;
             }
-        
-            tr:hover td {
-                background: #171717;
-            }
-            
-            td:nth-child(2),
-            td:nth-child(5),
-            td:nth-child(7),
-            td:nth-child(8) {
-                white-space: nowrap;
-            }
-        
-            /* TIME COLUMN */
-        
-            td:first-child {
-                color: #8e8e8e;
-                font-family: 'JetBrains Mono', monospace;
-                white-space: nowrap;
-                width: 90px;
-            }
-        
-            /* COPY BOX */
-        
+    
             .copybox {
-                background: #1f1f1f;
-                border: 1px solid #2a2a2a;
-                padding: 9px 10px;
-                border-radius: 10px;
-                cursor: pointer;
-                transition: 0.15s ease;
-                word-break: break-word;
-            }
-            
-            td:nth-child(2) .copybox,
-            td:nth-child(5) .copybox {
-                white-space: nowrap;
-                width: 100%;
-                display: inline-block;
-            }
-        
-            .copybox:hover {
-                background: #272727;
-                border-color: #3a3a3a;
-            }
-        
-            .copybox:active {
-                transform: scale(0.99);
-            }
-        
-            .copied {
-                outline: 2px solid #00cc66 !important;  
-            }
-            .copybox.copyperm  {
-                background: #404040 !important;
-                border: 1px solid #575757 !important;
+                padding: 8px;
+                font-size: 11px;
             }
     
-            .specialRowBtn {
-                background: #2a1f1f;
-                outline: 1px solid #ff4d4d;
-            }
-    
-            .copybox.med-special {
-                background: #3a2a1a; 
-                outline: 1px solid #ffb347;
-            }
-    
-            .rowCopyBtn.copybox {
-                width: 100%;
-                display: block;
-                height: 28px;
-            }
-            
-            /* MODAL */
-        
-            #changelogModal {
-                position: fixed;
-                inset: 0;
-                background: rgba(0,0,0,0.72);
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                backdrop-filter: blur(6px);
-                z-index: 999;
-            
-                /* animation */
-                opacity: 0;
-                visibility: hidden;
-                pointer-events: none;
-                transition: opacity 0.2s ease, visibility 0.2s ease;
-            }
-            
-            #changelogModal.show {
-                opacity: 1;
-                visibility: visible;
-                pointer-events: auto;
-            }
-        
             .modalBox {
-                background: #161616;
-                width: 430px;
-                max-width: 92%;
-                height: 340px;
-                border-radius: 20px;
-                padding: 18px;
-                position: relative;
-                border: 1px solid #2b2b2b;
-                box-shadow: 0 10px 40px rgba(0,0,0,0.45);
+                width: 95%;
+                height: 78%;
+                border-radius: 18px;
             }
-        
-            .closeBtn {
-                position: absolute;
-                top: 12px;
-                right: 15px;
-                cursor: pointer;
-                font-size: 17px;
-                color: #8d8d8d;
-                transition: 0.15s ease;
-            }
-        
-            .closeBtn:hover {
-                color: white;
-            }
-        
+    
             #changelogContent {
-                white-space: pre-wrap;
-                overflow-y: auto;
-                height: 255px;
-                background: #101010;
-                border: 1px solid #2a2a2a;
-                border-radius: 12px;
-                padding: 14px;
-                margin-top: 14px;
-                font-family: 'JetBrains Mono', monospace;
-                font-size: 12px;
-                line-height: 1.6;
-                color: #d8d8d8;
+                height: calc(100% - 70px);
             }
-            /*second button*/
-            .hiddenBox {
-                max-height: 0;
-                opacity: 0;
-                overflow: hidden;
-                transform: translateY(-8px);
-                transition:
-                    max-height 0.25s ease,
-                    opacity 0.2s ease,
-                    transform 0.2s ease,
-                    margin-top 0.25s ease;
-            }
-            
-            .hiddenBox.show {
-                max-height: 400px;
-                opacity: 1;
-                transform: translateY(0);
-                margin-top: 14px;
-            }
-            
-            .secondaryButton {
-                background: #1d1d1d;
-                color: #f2f2f2;
-                border: 1px solid #303030;
-            }
-            
-            .secondaryButton:hover {
-                background: #252525;
-            }
-            /* SCROLLBAR */
-            ::-webkit-scrollbar {
-                width: 10px;
-                height: 10px;
-            }
-        
-            ::-webkit-scrollbar-track {
-                background: #111;
-            }
-        
-            ::-webkit-scrollbar-thumb {
-                background: #333;
-                border-radius: 20px;
-            }
-        
-            ::-webkit-scrollbar-thumb:hover {
-                background: #444;
-            }
-        
-            /* MOBILE */
-        
-            @media (max-width: 768px) {
-        
-                body {
-                    padding: 12px;
-                }
-        
-                h1 {
-                    font-size: 28px;
-                }
-        
-                #lastUpdated {
-                    font-size: 11px;
-                }
-        
-                textarea {
-                    min-height: 180px;
-                    padding: 13px;
-                    font-size: 12px;
-                    border-radius: 14px;
-                }
-        
-                .buttonRow {
-                    flex-direction: column;
-                    gap: 10px;
-                    width: 100%;
-                }
-        
-                .mainButton {
-                    width: 100%;
-                    padding: 12px;
-                    font-size: 14px;
-                }
-        
-                .changelogBtn {
-                    font-size: 12px;
-                }
-        
-                table {
-                    min-width: 850px;
-                }
-        
-                th {
-                    font-size: 11px;
-                    padding: 10px;
-                }
-        
-                td {
-                    font-size: 11px;
-                    padding: 8px;
-                }
-        
-                .copybox {
-                    padding: 8px;
-                    font-size: 11px;
-                }
-        
-                .modalBox {
-                    width: 95%;
-                    height: 78%;
-                    border-radius: 18px;
-                }
-        
-                #changelogContent {
-                    height: calc(100% - 70px);
-                }
-            }
-        
-        </style>
-    </head>
-    <div id="lockscreen" style="
-        position:fixed;
-        inset:0;
-        background:black;
-        color:white;
-        display:flex;
-        flex-direction:column;
-        align-items:center;
-        justify-content:center;
-        font-family:Arial;
-        z-index:9999;
-    ">
+        }
     
-        <h1>Hello</h1>
-    
-        <input id="codeInput"
-            placeholder="Type anything..."
-            autocomplete="off"
-            style="
-                margin-top:10px;
-                padding:10px;
-                font-size:16px;
-                text-align:center;
-            "
-        >
-    </div>
-    
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-        
-            const SECRET = "BSM321";
-        
-            const input = document.getElementById("codeInput");
-            const lockscreen = document.getElementById("lockscreen");
-        
-            input.focus();
-        
-            function unlock() {
-        
-                const value = input.value.trim();
-        
-                if (value === SECRET) {
-        
-                    lockscreen.style.display = "none";
-        
-                } else {
-        
-                    input.value = "";
-                }
-            }
-        
-            // DESKTOP ENTER
-            input.addEventListener("keydown", (e) => {
-        
-                if (e.key === "Enter") {
-                    unlock();
-                }
-            });
-        
-            // MOBILE SAFE DETECTION
-            input.addEventListener("input", () => {
-        
-                if (input.value.trim() === SECRET) {
-                    unlock();
-                }
-            });
-        
-        });
-    </script>
-    <body>
-    
-        <!-- CHANGELOG MODAL -->
-    
-        <div id="changelogModal">
-    
-            <div class="modalBox">
-    
-                <div class="closeBtn" onclick="closeChangelog()">
-                    ✕
-                </div>
-    
-                <h3 style="margin-top:0; font-family:'Space Grotesk', sans-serif;">
-                    Changelogs
-                </h3>
-    
-                <div id="changelogContent">
-                    Loading changelogs...
-                </div>
-    
+    </style>
+</head>
+<div id="lockscreen" style="
+    position:fixed;
+    inset:0;
+    background:black;
+    color:white;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    font-family:Arial;
+    z-index:9999;
+">
+
+    <h1>Hello</h1>
+
+    <input id="codeInput"
+        placeholder="Type anything..."
+        autocomplete="off"
+        style="
+            margin-top:10px;
+            padding:10px;
+            font-size:16px;
+            text-align:center;
+        "
+    >
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+    const SECRET = "BSM321";
+
+    const input = document.getElementById("codeInput");
+    const lockscreen = document.getElementById("lockscreen");
+
+    input.focus();
+
+    function checkCode() {
+        const value = input.value.trim();
+
+        if (value === SECRET) {
+            lockscreen.remove();
+        } else {
+            input.value = "";
+        }
+    }
+
+    // Desktop Enter key
+    input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+            checkCode();
+        }
+    });
+
+    // Mobile fallback (VERY IMPORTANT)
+    input.addEventListener("keyup", (e) => {
+        if (e.key === "Enter") {
+            checkCode();
+        }
+    });
+
+    // Extra mobile safety: some keyboards don't send Enter properly
+    input.addEventListener("change", () => {
+        // optional: only triggers when user "submits" field
+    });
+
+});
+</script>
+<body>
+
+    <!-- CHANGELOG MODAL -->
+
+    <div id="changelogModal">
+
+        <div class="modalBox">
+
+            <div class="closeBtn" onclick="closeChangelog()">
+                ✕
             </div>
-    
-        </div>
-    
-        <!-- TOP SECTION -->
-    
-        <div class="topSection">
-    
-            <div id="lastUpdated"></div>
-    
-            <h1>Work Formatter</h1>
-    
-        </div>
-    
-        <!-- INPUT -->
-    
-        <textarea id="input" placeholder="Paste entries here..."></textarea>
-    
-        <div id="secondBoxWrapper" class="hiddenBox">
-    
-            <textarea id="input2" placeholder="Paste extra entries here..."></textarea>
-        
-        </div>
-    
-        <!-- BUTTONS -->
-    
-        <div class="buttonRow">
-    
-            <button class="mainButton secondaryButton" onclick="toggleSecondBox()">
-                Extra Box
-            </button>
-            
-            <button class="mainButton" onclick="formatEntries()">
-                Format Entries
-            </button>
-    
-            <button class="changelogBtn" onclick="openChangelog()">
+
+            <h3 style="margin-top:0; font-family:'Space Grotesk', sans-serif;">
                 Changelogs
-            </button>
-    
-        </div>
-    
-        <!-- DATE INPUT -->
-    
-        <div style="
-            margin-top:-60px;
-            margin-bottom:10px;
-            max-width:220px;
-        ">
-            
-            <div style="
-                font-size:12px;
-                color:#888;
-                margin-bottom:6px;
-                font-family:'Space Grotesk', sans-serif;
-                letter-spacing:0.6px;
-            ">
+            </h3>
+
+            <div id="changelogContent">
+                Loading changelogs...
             </div>
-        
-            <input
-                id="dateInput"
-                placeholder="DD/MM/YYYY"
-                oninput="validateDateInput(this)"
-                style="
-                    width:100%;
-                    background:#171717;
-                    color:white;
-                    border:1px solid #2b2b2b;
-                    border-radius:12px;
-                    padding:10px 12px;
-                    font-size:13px;
-                    font-family:'JetBrains Mono', monospace;
-                    outline:none;
-                    transition:0.15s ease;
-                "
-            >
-        
-            <div
-                id="dateError"
-                style="
-                    margin-top:6px;
-                    font-size:11px;
-                    color:#ff5c5c;
-                    display:none;
-                    font-family:'Inter', sans-serif;
-                "
-            >
-                Invalid Date
-            </div>
-        
+
         </div>
+
+    </div>
+
+    <!-- TOP SECTION -->
+
+    <div class="topSection">
+
+        <div id="lastUpdated"></div>
+
+        <h1>Work Formatter</h1>
+
+    </div>
+
+    <!-- INPUT -->
+
+    <textarea id="input" placeholder="Paste entries here..."></textarea>
+
+    <div id="secondBoxWrapper" class="hiddenBox">
+
+        <textarea id="input2" placeholder="Paste extra entries here..."></textarea>
     
-        <!-- OUTPUT -->
-    
-        <div id="output"></div>
-    
-        <script>
-            
-            function showLastUpdated() {
-    
-                const lastUpdated = new Date(document.lastModified);
-    
-                document.getElementById("lastUpdated").innerText =
-                    "Last updated: " + lastUpdated.toLocaleString();
-            }
-    
-            showLastUpdated();
-    
-            async function loadChangelog() {
-    
-                try {
-            
-                    const response = await fetch('changelogs.md');
-                    const text = await response.text();
-            
-                    const box = document.getElementById('changelogContent');
-            
-                    box.innerText = text;
-                    requestAnimationFrame(() => {
-                        box.scrollTo({
-                            top: box.scrollHeight,
-                            behavior: "smooth"
-                        });
+    </div>
+
+    <!-- BUTTONS -->
+
+    <div class="buttonRow">
+
+        <button class="mainButton secondaryButton" onclick="toggleSecondBox()">
+            Extra Box
+        </button>
+        
+        <button class="mainButton" onclick="formatEntries()">
+            Format Entries
+        </button>
+
+        <button class="changelogBtn" onclick="openChangelog()">
+            Changelogs
+        </button>
+
+    </div>
+
+    <!-- OUTPUT -->
+
+    <div id="output"></div>
+
+    <script>
+        
+        function showLastUpdated() {
+
+            const lastUpdated = new Date(document.lastModified);
+
+            document.getElementById("lastUpdated").innerText =
+                "Last updated: " + lastUpdated.toLocaleString();
+        }
+
+        showLastUpdated();
+
+        async function loadChangelog() {
+
+            try {
+        
+                const response = await fetch('changelogs.md');
+                const text = await response.text();
+        
+                const box = document.getElementById('changelogContent');
+        
+                box.innerText = text;
+                requestAnimationFrame(() => {
+                    box.scrollTo({
+                        top: box.scrollHeight,
+                        behavior: "smooth"
                     });
-            
-                } catch (err) {
-            
-                    document.getElementById('changelogContent').innerText =
-                        'Failed to load changelogs.';
+                });
+        
+            } catch (err) {
+        
+                document.getElementById('changelogContent').innerText =
+                    'Failed to load changelogs.';
+            }
+        }
+
+        function openChangelog() {
+
+            const modal = document.getElementById("changelogModal");
+    
+            modal.classList.add("show");
+        
+            loadChangelog();
+        }
+    
+        function closeChangelog() {
+    
+            const modal = document.getElementById("changelogModal");
+    
+            modal.classList.remove("show");
+        }
+
+        function cleanLine(line) {
+
+            return line
+                .replace(/‎/g, '')
+                .trim();
+        }
+
+        function copyText(element) {
+
+            const text = decodeURIComponent(element.dataset.copy || '');
+        
+            navigator.clipboard.writeText(text);
+        
+            element.classList.add('copied');
+            element.classList.add('copyperm');
+        
+            setTimeout(() => {
+                element.classList.remove('copied');
+            }, 500);
+        }
+        
+        function toggleSecondBox() {
+
+            const box =
+                document.getElementById('secondBoxWrapper');
+        
+            box.classList.toggle('show');
+        }
+
+        const specialMeds = [
+            "xanax",
+            "apo-alpraz",
+            "apo-lorazepam",
+            "asolan",
+            "concerta",
+            "diazepam",
+            "insopin",
+            "medikinet",
+            "nasal spray",
+            "ritalin",
+            "rivopam",
+            "rivotril",
+            "somidem",
+            "stillnox"
+        ];
+
+        const specialMedExactMatch = [
+            "alprazolam",
+            "apo-alpraz"
+        ];
+
+        function formatEntries() {
+
+            const raw = document.getElementById('input').value;
+
+            const raw2 = document.getElementById('input2').value;
+
+            const lines = raw
+                .split('\n')
+                .map(cleanLine);
+
+            const entries = [];
+
+            let currentEntry = [];
+
+            for (const line of lines) {
+
+                currentEntry.push(line);
+
+                if (line.includes('PR/')) {
+
+                    entries.push(currentEntry);
+
+                    currentEntry = [];
                 }
             }
-    
-            function openChangelog() {
-    
-                const modal = document.getElementById("changelogModal");
-        
-                modal.classList.add("show");
+
+            // SECOND BOX PARSING
+
+            const secondLines = raw2
+                .split('\n')
+                .map(cleanLine);
             
-                loadChangelog();
+            const secondEntries = [];
+            
+            let currentSecondEntry = [];
+            
+            for (const line of secondLines) {
+            
+                const isNewEntry =
+                    line.includes('M (R)') &&
+                    line.includes('THE MIND FACULTY SDN BHD');
+            
+                if (isNewEntry && currentSecondEntry.length > 0) {
+            
+                    secondEntries.push(currentSecondEntry);
+            
+                    currentSecondEntry = [];
+                }
+            
+                currentSecondEntry.push(line);
             }
-        
-            function closeChangelog() {
-        
-                const modal = document.getElementById("changelogModal");
-        
-                modal.classList.remove("show");
+            
+            if (currentSecondEntry.length > 0) {
+            
+                secondEntries.push(currentSecondEntry);
             }
-    
-            function cleanLine(line) {
-    
-                return line
-                    .replace(/‎/g, '')
+
+            let html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>TIME</th>
+                            <th>INVOICE</th>
+                            <th>NAME</th>
+                            <th>ADDRESS</th>
+                            <th>IDENTIFICATION</th>
+                            <th>MED</th>
+                            <th>AMOUNT</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            entries.forEach(entryLines => {
+
+                // TIME
+
+                let time = '';
+
+                const firstLine = entryLines[0] || '';
+
+                const timeMatch =
+                    firstLine.match(/\b(\d{2}:\d{2}:\d{2})\b/);
+
+                if (timeMatch) {
+                    time = timeMatch[1];
+                }
+
+                // NAME
+
+                let name = '';
+
+                const nameMatch =
+                    firstLine.match(/\d{2}:\d{2}:\d{2}\s+(.*?)\s+TMF/i);
+
+                if (nameMatch) {
+
+                    name = nameMatch[1]
+                        .replace(/\s+\.\s*$/, '')
+                        .trim();
+                }
+
+                // IDENTIFICATION
+
+                let identification = '';
+
+                if (entryLines[3]) {
+
+                    identification =
+                        entryLines[3].replace(/[^a-zA-Z0-9-]/g, '');
+                }
+
+                // ADDRESS
+
+                let addressLines =
+                    entryLines.slice(6, 19);
+
+                addressLines = addressLines
+                    .map(x => x.trim())
+                    .filter(x => x !== '-')
+                    .filter(x => x !== '');
+
+                let address = addressLines.join(', ');
+
+                address = address
+                    .replace(/,\s*,+/g, ',')
+                    .replace(/\s+/g, ' ')
                     .trim();
-            }
-    
-            function copyText(element) {
-    
-                const text = decodeURIComponent(element.dataset.copy || '');
-            
-                navigator.clipboard.writeText(text);
-            
-                element.classList.add('copied');
-                element.classList.add('copyperm');
-            
-                setTimeout(() => {
-                    element.classList.remove('copied');
-                }, 500);
-            }
-    
-            function validateDateInput(input) {
-    
-                const value = input.value.trim();
-            
-                const error =
-                    document.getElementById("dateError");
-            
-                // DD/MM/YYYY
-                const regex =
-                    /^(\d{2})\/(\d{2})\/(\d{4})$/;
-            
-                const match = value.match(regex);
-            
-                let valid = false;
-            
-                if (match) {
-            
-                    const day = parseInt(match[1], 10);
-                    const month = parseInt(match[2], 10);
-                    const year = parseInt(match[3], 10);
-            
-                    const date =
-                        new Date(year, month - 1, day);
-            
-                    valid =
-                        date.getFullYear() === year &&
-                        date.getMonth() === month - 1 &&
-                        date.getDate() === day;
-                }
-            
-                if (!value || valid) {
-            
-                    input.style.borderColor = "#2b2b2b";
-            
-                    error.style.display = "none";
-            
-                } else {
-            
-                    input.style.borderColor = "#ff4d4d";
-            
-                    error.style.display = "block";
-                }
-            
-                return valid;
-            }
-    
-            function copyRowFromBtn(btn) {
-    
-                const isSpecial = btn.dataset.isspecial === "true";
-    
-                const dateInput =
-                    document.getElementById("dateInput");
-            
-                const hasValidDate =
-                    validateDateInput(dateInput);
-            
-                const dateValue =
-                    dateInput.value.trim();
-    
-                const rowData = [
-                    ...(hasValidDate ? [dateValue] : []),
-                    
-                    decodeURIComponent(btn.dataset.invoice),
-                    decodeURIComponent(btn.dataset.name),
-                    decodeURIComponent(btn.dataset.address),
-                    decodeURIComponent(btn.dataset.id),
-                    
-                    isSpecial
-                        ? ''
-                        : decodeURIComponent(btn.dataset.med),
-                    decodeURIComponent(btn.dataset.amount),
-                    
-                    // ✅ ONLY include stock if special med
-                    ...(isSpecial ? [decodeURIComponent(btn.dataset.stock)] : [])
-                ].join('\t');
+
+                // MED
+                let med = '';
                 
-                navigator.clipboard.writeText(rowData);
+                for (const line of entryLines) {
                 
-                btn.classList.add('copied');
-                btn.classList.add('copyperm');
-    
-                setTimeout(() => {
-                    btn.classList.remove('copied');
-                }, 500);
-            }
-            
-            function toggleSecondBox() {
-    
-                const box =
-                    document.getElementById('secondBoxWrapper');
-            
-                box.classList.toggle('show');
-            }
-    
-            function getStockFromFour00(secondEntries, med, name, baseTimeSec, occurrenceIndex = 0) {
-    
+                    const match = line.match(/(ORIGINAL MED|GENERIC MED)\s+(.*)/i);
+                
+                    if (!match) continue;
+                
+                    const afterMedRaw = match[2] || '';
+                
+                    const cleanedAfterMed = afterMedRaw
+                        .replace(/\s+/g, ' ')
+                        .trim();
+                
+                // normalize for checking
+                    const lowerLine = afterMedRaw.toLowerCase();
+
+                // ESKETAMINE SPECIAL CASE
+                    const isEsketamineCase =
+                        lowerLine.includes('esketamine');
+                
+                    if (isEsketamineCase) {
+                    
+                        // take everything BEFORE BOX
+                        const beforeBox = afterMedRaw.split(/BOX/i)[0] || '';
+                    
+                        // extract column-like value (NASAL SPRAY 28MG)
+                        const parts = beforeBox
+                            .split(/\t|\s{2,}/)
+                            .map(x => x.trim())
+                            .filter(Boolean);
+                    
+                        med = parts[parts.length - 1] || beforeBox.trim();
+                    
+                        break;
+                    }
+                
+                //  XANAX SPECIAL CASE
+                    const isXanaxCase =
+                        lowerLine.includes('alprazolam') ||
+                        lowerLine.includes('apo-alpraz');
+                
+                    if (isXanaxCase) {
+                
+                        // take FULL name after MED (before TAB breaks it later)
+                        const fullName = afterMedRaw
+                            .split(/\t|CAPSULE|TABLET|BOX/i)[0]
+                            .replace(/\s+/g, ' ')
+                            .trim();
+                
+                        med = fullName;
+                        break;
+                    }
+                
+                // ------------------------------
+// 🟢 NORMAL CASE
+// ------------------------------
+
+const beforeType =
+    afterMedRaw.split(/CAPSULE|TABLET|BOX/i)[0] || '';
+
+const allBrackets =
+    [...beforeType.matchAll(/\(([^)]+)\)/g)];
+
+if (allBrackets.length > 0) {
+
+    let detectedMed =
+        allBrackets[0][1].trim();
+
+    // Convert Lemborexant -> DAYVIGO 5MG
+    if (
+        detectedMed.toLowerCase() === "lemborexant"
+    ) {
+
+        med = "DAYVIGO 5MG";
+
+    } else {
+
+        med = detectedMed;
+    }
+
+} else {
+
+    const fallback =
+        beforeType
+            .split(/\s{2,}|\t+/)
+            .map(x => x.trim())
+            .filter(x => x);
+
+    med = fallback[fallback.length - 1] || '';
+}
+
+break;
+                }
+
+                // AMOUNT
+
+                let amount = '';
+
+                for (let i = 0; i < entryLines.length; i++) {
+
+                    const line = entryLines[i];
+
+                    if (
+                        line.includes('CAPSULE') ||
+                        line.includes('TABLET') ||
+                        line.includes('BOX')
+                    ) {
+
+                        for (let j = i; j < entryLines.length; j++) {
+
+                            const numMatch =
+                                entryLines[j].match(/(\d+)\.0/);
+
+                            if (numMatch) {
+
+                                amount = numMatch[1];
+
+                                break;
+                            }
+                        }
+                    }
+                }
+                
                 const normalize = (str) =>
                     (str || '')
                         .toLowerCase()
                         .replace(/\s+/g, ' ')
                         .trim();
-            
-                const medLower = normalize(med);
-                const nameLower = normalize(name);
-            
-                function timeToSeconds(t) {
-                    const [h, m, s] = t.split(':').map(Number);
-                    return h * 3600 + m * 60 + s;
-                }
-            
-                for (const entry of secondEntries) {
-            
-                    let foundMed = false;
-                    let foundName = false;
-                    let localTimeMatch = false;
-                    let countTarget = 4 * (occurrenceIndex + 1);
-                    let count = 0;
-            
-                    for (let i = 0; i < entry.length; i++) {
-            
-                        const line = entry[i];
-                        const lower = line.toLowerCase();
-            
-                        const tMatch = line.match(/\b(\d{2}:\d{2}:\d{2})\b/);
-                        const lineTime = tMatch ? tMatch[1] : null;
-            
-                        // 1. anchor med
-                        if (!foundMed && lower.includes(medLower)) {
-                            foundMed = true;
-                        }
-            
-                        // 2. anchor name after med
-                        if (foundMed && !foundName && lower.includes(nameLower)) {
-                            foundName = true;
-                        }
-            
-                        // 3. confirm time alignment
-                        if (foundName && lineTime) {
-            
-                            const lineTimeSec = timeToSeconds(lineTime);
-            
-                            if (Math.abs(lineTimeSec - baseTimeSec) <= 2) {
-                                localTimeMatch = true;
-                            }
-                        }
-            
-                        // 4. only start counting inside correct context
-                        if (foundName && localTimeMatch) {
-            
-                            const matches = line.match(/[\d,]+\.\d{2}/g);
-            
-                            if (matches) {
-            
-                                for (const m of matches) {
-            
-                                    count++;
-    
-                                    
-            
-                                    if (count === countTarget) {
-                                        return m.split('.')[0].replace(/,/g, '');
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            
-                return '';
-            }
-    
-            const specialMeds = [
-                "xanax",
-                "apo-alpraz",
-                "apo-lorazepam",
-                "asolan",
-                "concerta",
-                "diazepam",
-                "insopin",
-                "medikinet",
-                "nasal spray",
-                "ritalin",
-                "rivopam",
-                "rivotril",
-                "somidem",
-                "stillnox"
-            ];
-    
-            const specialMedExactMatch = [
-                "alprazolam",
-                "apo-alpraz"
-            ];
-    
-            
-    
-            function formatEntries() {
-
-                const stockMatchTracker = new Map();
-    
-                const raw = document.getElementById('input').value;
-    
-                const raw2 = document.getElementById('input2').value;
-    
-                let lines = raw
-                    .split('\n')
-                    .map(cleanLine);
-
-                const processedByIndex = lines.findIndex(line =>
-                    line.toLowerCase().replace(/\s+/g, ' ').includes('processed by')
+                
+                const medClean = normalize(med);
+                
+                const isSpecialMed = specialMeds.some(m =>
+                    medClean.includes(normalize(m))
                 );
+
+                // INVOICE LOOKUP
+
+let invoice = '';
                 
-                if (processedByIndex !== -1) {
-                    lines = lines.slice(processedByIndex + 1);
-                }
+function timeToSeconds(t) {
+    const [h, m, s] = t.split(':').map(Number);
+    return h * 3600 + m * 60 + s;
+}
+const baseTimeSec = timeToSeconds(time);
                 
-                const entries = [];
-    
-                let currentEntry = [];
-    
-                for (const line of lines) {
-    
-                    currentEntry.push(line);
-    
-                    if (line.includes('PR/')) {
-    
-                        entries.push(currentEntry);
-    
-                        currentEntry = [];
-                    }
-                }
-    
-                // SECOND BOX PARSING
-    
-                const secondLines = raw2
-                    .split('\n')
-                    .map(cleanLine);
+for (const secondEntry of secondEntries) {
+
+    let foundMed = false;
+    let foundName = false;
+
+    for (let i = 0; i < secondEntry.length; i++) {
+
+        const line = secondEntry[i];
+        const lower = line.toLowerCase();
+
+        const tMatch = line.match(/\b(\d{2}:\d{2}:\d{2})\b/);
+        const lineTime = tMatch ? tMatch[1] : null;
+
+        if (!foundMed && lower.includes(med.toLowerCase())) {
+            foundMed = true;
+        }
+
+        if (foundMed && !foundName && lower.includes(name.toLowerCase())) {
+            foundName = true;
+        }
+
+        if (foundName && lineTime) {
+
+    const lineTimeSec = timeToSeconds(lineTime);
+
+    if (Math.abs(lineTimeSec - baseTimeSec) <= 2) {
+
+        const invoiceMatch = line.match(/SO\/[\w/]+/);
+
+        if (invoiceMatch) {
+            invoice = invoiceMatch[0];
+            break;
+        }
+    }
+        }
+    }
+
+    if (invoice) break;
+}
                 
-                const secondEntries = [];
-                
-                let currentSecondEntry = [];
-                
-                for (const line of secondLines) {
-                
-                    const isNewEntry =
-                        line.includes('M (R)') &&
-                        line.includes('THE MIND FACULTY SDN BHD');
-                
-                    if (isNewEntry && currentSecondEntry.length > 0) {
-                
-                        secondEntries.push(currentSecondEntry);
-                
-                        currentSecondEntry = [];
-                    }
-                
-                    currentSecondEntry.push(line);
-                }
-                
-                if (currentSecondEntry.length > 0) {
-                
-                    secondEntries.push(currentSecondEntry);
-                }
-    
-                let html = `
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>TIME</th>
-                                <th>INVOICE</th>
-                                <th>NAME</th>
-                                <th>ADDRESS</th>
-                                <th>IDENTIFICATION</th>
-                                <th>MED</th>
-                                <th>AMOUNT</th>
-                                <th>STOCK</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                `;
-    
-                entries.forEach(entryLines => {
-    
-                    // TIME
-    
-                    let time = '';
-    
-                    const firstLine = entryLines[0] || '';
-    
-                    const timeMatch =
-                        firstLine.match(/\b(\d{2}:\d{2}:\d{2})\b/);
-    
-                    if (timeMatch) {
-                        time = timeMatch[1];
-                    }
-    
-                    // NAME
-    
-                    let name = '';
-    
-                    const nameMatch =
-                        firstLine.match(/\d{2}:\d{2}:\d{2}\s+(.*?)\s+TMF/i);
-    
-                    if (nameMatch) {
-    
-                        name = nameMatch[1]
-                            .replace(/\s+\.\s*$/, '')
-                            .trim();
-                    }
-    
-                    // IDENTIFICATION
-    
-                    let identification = '';
-    
-                    if (entryLines[3]) {
-    
-                        identification =
-                            entryLines[3].replace(/[^a-zA-Z0-9-]/g, '');
-                    }
-    
-                    // ADDRESS
-    
-                    let addressLines =
-                        entryLines.slice(6, 19);
-    
-                    addressLines = addressLines
-                        .map(x => x.trim())
-                        .filter(x => x !== '-')
-                        .filter(x => x !== '');
-    
-                    let address = addressLines.join(', ');
-    
-                    address = address
-                        .replace(/,\s*,+/g, ',')
-                        .replace(/\s+/g, ' ')
-                        .trim();
-    
-                    // MED
-                    let med = '';
-                    
-                    for (const line of entryLines) {
-                    
-                        const match = line.match(/(ORIGINAL MED|GENERIC MED)\s+(.*)/i);
-                    
-                        if (!match) continue;
-                    
-                        const afterMedRaw = match[2] || '';
-                    
-                        const cleanedAfterMed = afterMedRaw
-                            .replace(/\s+/g, ' ')
-                            .trim();
-                    
-                    // normalize for checking
-                        const lowerLine = afterMedRaw.toLowerCase();
-    
-                    // ESKETAMINE SPECIAL CASE
-                        const isEsketamineCase =
-                            lowerLine.includes('esketamine');
-                    
-                        if (isEsketamineCase) {
-                        
-                            // take everything BEFORE BOX
-                            const beforeBox = afterMedRaw.split(/BOX/i)[0] || '';
-                        
-                            // extract column-like value (NASAL SPRAY 28MG)
-                            const parts = beforeBox
-                                .split(/\t|\s{2,}/)
-                                .map(x => x.trim())
-                                .filter(Boolean);
-                        
-                            med = parts[parts.length - 1] || beforeBox.trim();
-                        
-                            break;
-                        }
-                    
-                    //  XANAX SPECIAL CASE
-                        const isXanaxCase =
-                            lowerLine.includes('alprazolam') ||
-                            lowerLine.includes('apo-alpraz');
-                    
-                        if (isXanaxCase) {
-                    
-                            // take FULL name after MED (before TAB breaks it later)
-                            const fullName = afterMedRaw
-                                .split(/\t|CAPSULE|TABLET|BOX/i)[0]
-                                .replace(/\s+/g, ' ')
-                                .trim();
-                    
-                            med = fullName;
-                            break;
-                        }
-                    
-                        // ------------------------------
-                        // 🟢 NORMAL CASE
-                        // ------------------------------
-                        
-                        const beforeType =
-                            afterMedRaw.split(/CAPSULE|TABLET|BOX/i)[0] || '';
-                        
-                        const allBrackets =
-                            [...beforeType.matchAll(/\(([^)]+)\)/g)];
-                        
-                        if (allBrackets.length > 0) {
-                        
-                            let detectedMed =
-                                allBrackets[0][1].trim();
-                        
-                            // Convert Lemborexant -> DAYVIGO 5MG
-                            if (
-                                detectedMed.toLowerCase() === "lemborexant"
-                            ) {
-                        
-                                med = "DAYVIGO 5MG";
-                        
-                            } else {
-                        
-                                med = detectedMed;
-                            }
-                        
-                        } else {
-                        
-                            const fallback =
-                                beforeType
-                                    .split(/\s{2,}|\t+/)
-                                    .map(x => x.trim())
-                                    .filter(x => x);
-                        
-                            med = fallback[fallback.length - 1] || '';
-                        }
-                    
-                    break;
-                    }
-    
-                    // AMOUNT
-    
-                    let amount = '';
-    
-                    for (let i = 0; i < entryLines.length; i++) {
-    
-                        const line = entryLines[i];
-    
-                        if (
-                            line.includes('CAPSULE') ||
-                            line.includes('TABLET') ||
-                            line.includes('BOX')
-                        ) {
-    
-                            for (let j = i; j < entryLines.length; j++) {
-    
-                                const numMatch =
-                                    entryLines[j].match(/([\d,]+)\.0/);
-                                
-                                if (numMatch) {
-                                    amount = numMatch[1].replace(/,/g, '');
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    
-                    const normalize = (str) =>
-                        (str || '')
-                            .toLowerCase()
-                            .replace(/\s+/g, ' ')
-                            .trim();
-                    
-                    const medClean = normalize(med);
-                    
-                    const isSpecialMed = specialMeds.some(m =>
-                        medClean.includes(normalize(m))
-                    );
-    
-                    // INVOICE LOOKUP
-    
-    
-                    let invoice = '';
-                    
-                    function timeToSeconds(t) {
-                        const [h, m, s] = t.split(':').map(Number);
-                        return h * 3600 + m * 60 + s;
-                    }
-                    const baseTimeSec = timeToSeconds(time);
-                                    
-                    for (const secondEntry of secondEntries) {
-                    
-                        let foundMed = false;
-                        let foundName = false;
-                    
-                        for (let i = 0; i < secondEntry.length; i++) {
-                    
-                            const line = secondEntry[i];
-                            const lower = line.toLowerCase();
-                    
-                            const tMatch = line.match(/\b(\d{2}:\d{2}:\d{2})\b/);
-                            const lineTime = tMatch ? tMatch[1] : null;
-                    
-                            if (!foundMed && lower.includes(med.toLowerCase())) {
-                                foundMed = true;
-                            }
-                    
-                            if (foundMed && !foundName && lower.includes(name.toLowerCase())) {
-                                foundName = true;
-                            }
-                    
-                            if (foundName && lineTime) {
-                    
-                                const lineTimeSec = timeToSeconds(lineTime);
-                            
-                                if (Math.abs(lineTimeSec - baseTimeSec) <= 2) {
-                            
-                                    const invoiceMatch = line.match(/SO\/[\w/]+/);
-                            
-                                    if (invoiceMatch) {
-                                        invoice = invoiceMatch[0];
-                                    }
-                                }
-                            }
-                        }
-            
-                        if (invoice) break;
-                    }
-    
-                    let stock = '';
-    
-                    // create unique key for THIS exact entry
-                    const key = `${med.toLowerCase()}|${name.toLowerCase()}|${baseTimeSec}`;
-                    
-                    // get how many times we've already seen this exact combo
-                    let occurrenceIndex = stockMatchTracker.get(key) || 0;
-                    
-                    // run stock extraction using correct offset
-                    stock = getStockFromFour00(
-                        secondEntries,
-                        med,
-                        name,
-                        baseTimeSec,
-                        occurrenceIndex
-                    );
-                    
-                    // ONLY increment if match actually exists in data
-                    if (stock) {
-                        stockMatchTracker.set(key, occurrenceIndex + 1);
-                    }
-                    
-                    html += `
-                        <tr>
-    
-                            <td style="color:#888; font-family:'JetBrains Mono', monospace;">
-    
-                                <div>${time || '-'}</div>
-                            
-                                <button class="rowCopyBtn copybox ${isSpecialMed ? 'specialRowBtn' : ''}"
-                                    data-invoice="${encodeURIComponent(invoice || '')}"
-                                    data-name="${encodeURIComponent(name || '')}"
-                                    data-address="${encodeURIComponent(address || '')}"
-                                    data-id="${encodeURIComponent(identification || '')}"
-                                    data-med="${encodeURIComponent(med || '')}"
-                                    data-amount="${encodeURIComponent(amount || '')}"
-                                    data-isspecial="${isSpecialMed}"
-                                    data-stock="${encodeURIComponent(stock || '')}"
-                                    onclick="copyRowFromBtn(this)">
-                                </button>
-                            
-                            </td>
-    
-                            <td>
-                                <div class="copybox"
-                                    data-copy="${encodeURIComponent(invoice)}"
-                                     onclick="copyText(this)">
-                                    ${invoice || '-'}
-                                </div>
-                            </td>
-                            
-                            <td>
-                                <div class="copybox"
-                                    data-copy="${encodeURIComponent(name)}"
-                                     onclick="copyText(this)">
-                                    ${name || '-'}
-                                </div>
-                            </td>
-    
-                            <td>
-                                <div class="copybox"
-                                    data-copy="${encodeURIComponent(address)}"
-                                     onclick="copyText(this)">
-                                    ${address || '-'}
-                                </div>
-                            </td>
-    
-                            <td>
-                                <div class="copybox"
-                                    data-copy="${encodeURIComponent(identification)}"
-                                     onclick="copyText(this)">
-                                    ${identification || '-'}
-                                </div>
-                            </td>
-    
-                            <td>
-                                <div class="copybox med-box ${isSpecialMed ? 'med-special' : ''}"
-                                    data-copy="${encodeURIComponent(med)}"
-                                    onclick="copyText(this)">
-                                    ${med || '-'}
-                                </div>
-                            </td>
-    
-                            <td>
-                                <div class="copybox"
-                                    data-copy="${encodeURIComponent(amount)}"
-                                     onclick="copyText(this)">
-                                    ${amount || '-'}
-                                </div>
-                            </td>
-                            
-                            <td>
-                                <div class="copybox"
-                                    data-copy="${encodeURIComponent(stock)}"
-                                     onclick="copyText(this)">
-                                    ${stock || '-'}
-                                </div>
-                            </td>
-                        </tr>
-                    `;
-                });
-    
                 html += `
-                        </tbody>
-                    </table>
+                    <tr>
+
+                        <td style="color:#888; font-family:'JetBrains Mono', monospace;">
+                            ${time || '-'}
+                        </td>
+
+                        <td>
+                            <div class="copybox"
+                                data-copy="${encodeURIComponent(invoice)}"
+                                 onclick="copyText(this)">
+                                ${invoice || '-'}
+                            </div>
+                        </td>
+                        
+                        <td>
+                            <div class="copybox"
+                                data-copy="${encodeURIComponent(name)}"
+                                 onclick="copyText(this)">
+                                ${name || '-'}
+                            </div>
+                        </td>
+
+                        <td>
+                            <div class="copybox"
+                                data-copy="${encodeURIComponent(address)}"
+                                 onclick="copyText(this)">
+                                ${address || '-'}
+                            </div>
+                        </td>
+
+                        <td>
+                            <div class="copybox"
+                                data-copy="${encodeURIComponent(identification)}"
+                                 onclick="copyText(this)">
+                                ${identification || '-'}
+                            </div>
+                        </td>
+
+                        <td>
+                            <div class="copybox med-box ${isSpecialMed ? 'med-special' : ''}"
+                                data-copy="${encodeURIComponent(med)}"
+                                onclick="copyText(this)">
+                                ${med || '-'}
+                            </div>
+                        </td>
+
+                        <td>
+                            <div class="copybox"
+                                data-copy="${encodeURIComponent(amount)}"
+                                 onclick="copyText(this)">
+                                ${amount || '-'}
+                            </div>
+                        </td>
+
+                    </tr>
                 `;
-    
-                document.getElementById('output').innerHTML = html;
-            }
-        </script>
-    
-    </body>
+            });
+
+            html += `
+                    </tbody>
+                </table>
+            `;
+
+            document.getElementById('output').innerHTML = html;
+        }
+    </script>
+
+</body>
 </html>
