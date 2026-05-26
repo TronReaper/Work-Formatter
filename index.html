@@ -432,6 +432,91 @@
                     height: calc(100% - 70px);
                 }
             }
+
+            /* LIGHT MODE */
+
+body,
+textarea,
+table,
+td,
+th,
+.copybox,
+.modalBox,
+#changelogContent,
+input,
+.mainButton,
+.secondaryButton {
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease;
+}
+
+body.lightmode {
+    background: #f4f4f4;
+    color: #111;
+}
+
+body.lightmode h1,
+body.lightmode #lastUpdated,
+body.lightmode .changelogBtn,
+body.lightmode th,
+body.lightmode td,
+body.lightmode .copybox,
+body.lightmode input,
+body.lightmode textarea {
+    color: #111;
+}
+
+body.lightmode textarea,
+body.lightmode input,
+body.lightmode table,
+body.lightmode td,
+body.lightmode th,
+body.lightmode .copybox,
+body.lightmode .modalBox,
+body.lightmode #changelogContent {
+    background: #ffffff;
+    border-color: #d7d7d7;
+}
+
+body.lightmode tr:hover td {
+    background: #f0f0f0;
+}
+
+body.lightmode .secondaryButton {
+    background: #ececec;
+    color: #111;
+    border-color: #cccccc;
+}
+
+body.lightmode .mainButton {
+    background: #111;
+    color: white;
+}
+
+body.lightmode .copybox.copyperm {
+    background: #d9d9d9 !important;
+    border-color: #bdbdbd !important;
+}
+
+/* BOLDER FORMATTING TEXT */
+
+td {
+    font-weight: 600;
+}
+
+.copybox {
+    font-weight: 600;
+}
+
+textarea {
+    font-weight: 600;
+}
+
+input {
+    font-weight: 600;
+}
         
         </style>
     </head>
@@ -554,6 +639,10 @@
     
             <button class="mainButton secondaryButton" onclick="toggleSecondBox()">
                 Extra Box
+            </button>
+
+            <button class="mainButton secondaryButton" onclick="toggleLightMode()">
+                Toggle Theme
             </button>
             
             <button class="mainButton" onclick="formatEntries()">
@@ -1321,6 +1410,10 @@
                 `;
     
                 document.getElementById('output').innerHTML = html;
+            }
+            function toggleLightMode() {
+
+                document.body.classList.toggle('lightmode');
             }
         </script>
     
