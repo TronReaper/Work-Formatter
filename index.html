@@ -463,8 +463,6 @@
     #changelogContent {
         height: calc(100% - 70px);
     }
-
-    /* DATE INPUT FIX */
     div[style*="margin-top:-60px"] {
         margin-top: 10px !important;
         max-width: 100% !important;
@@ -475,6 +473,28 @@
         padding: 12px !important;
     }
             }
+
+            .themeButton {
+    background: #1d1d1d;
+    color: #f2f2f2;
+    border: 1px solid #303030;
+    border-radius: 12px;
+    padding: 11px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: 0.18s ease;
+}
+
+.themeButton:hover {
+    opacity: 0.93;
+    transform: translateY(-1px);
+}
+
+.themeButton:active {
+    transform: scale(0.98);
+}
 
             /* LIGHT MODE */
 
@@ -488,7 +508,8 @@
             #changelogContent,
             input,
             .mainButton,
-            .secondaryButton {
+            .secondaryButton,
+            .themeButton {
                 transition:
                     background 0.2s ease,
                     color 0.2s ease,
@@ -533,7 +554,8 @@
                 border-color: #cccccc;
             }
             
-            body.lightmode .mainButton {
+            body.lightmode .mainButton,
+            body.lightmode .themebutton {
                 background: #111;
                 color: white;
             }
@@ -684,7 +706,7 @@
                 Extra Box
             </button>
 
-            <button class="mainButton secondaryButton pushRight" onclick="toggleLightMode()">
+            <button class="themeButton pushRight" onclick="toggleLightMode()">
                 Toggle Theme
             </button>
             
