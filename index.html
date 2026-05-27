@@ -377,95 +377,86 @@
         
             @media (max-width: 768px) {
 
-    body {
-        padding: 12px;
-    }
+                body {
+                    padding: 12px;
+                }
+                h1 {
+                    font-size: 28px;
+                }
+                #lastUpdated {
+                    font-size: 11px;
+                }
+                textarea {
+                    min-height: 180px;
+                    padding: 13px;
+                    font-size: 12px;
+                    border-radius: 14px;
+                }
+                .buttonRow {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: stretch;
+                    justify-content: center;
+                    gap: 10px;
+                    width: 100%;
+                    padding-right: 0;
+                }
+                .buttonRow .pushRight {
+                    position: static;
+                    transform: none;
+                    width: 100%;
+                }
+                
+                .mainButton,
+                .secondaryButton,
+                .changelogBtn {
+                    width: 100%;
+                }
 
-    h1 {
-        font-size: 28px;
-    }
+                .mainButton {
+                    padding: 13px;
+                    font-size: 14px;
+                    border-radius: 12px;
+                }
 
-    #lastUpdated {
-        font-size: 11px;
-    }
+                .changelogBtn {
+                    background: #1d1d1d;
+                    border: 1px solid #303030;
+                    border-radius: 12px;
+                    padding: 12px;
+                    color: #f2f2f2;
+                    font-size: 13px;
+                }
 
-    textarea {
-        min-height: 180px;
-        padding: 13px;
-        font-size: 12px;
-        border-radius: 14px;
-    }
+                table {
+                    min-width: 850px;
+                }
+                th {
+                    font-size: 11px;
+                    padding: 10px;
+                }
+                td {
+                    font-size: 11px;
+                    padding: 8px;
+                }
 
-    /* BUTTONS */
-    .buttonRow {
-        display: flex;
-        flex-direction: column;
-        align-items: stretch;
-        justify-content: center;
-        gap: 10px;
-        width: 100%;
-        padding-right: 0;
-    }
+                .copybox {
+                    padding: 8px;
+                    font-size: 11px;
+                }
+                .modalBox {
+                    width: 95%;
+                    height: 78%;
+                    border-radius: 18px;
+                }
 
-    .buttonRow .pushRight {
-        position: static;
-        transform: none;
-        width: 100%;
-    }
-
-    .mainButton,
-    .secondaryButton,
-    .changelogBtn {
-        width: 100%;
-    }
-
-    .mainButton {
-        padding: 13px;
-        font-size: 14px;
-        border-radius: 12px;
-    }
-
-    .changelogBtn {
-        background: #1d1d1d;
-        border: 1px solid #303030;
-        border-radius: 12px;
-        padding: 12px;
-        color: #f2f2f2;
-        font-size: 13px;
-    }
-
-    table {
-        min-width: 850px;
-    }
-
-    th {
-        font-size: 11px;
-        padding: 10px;
-    }
-
-    td {
-        font-size: 11px;
-        padding: 8px;
-    }
-
-    .copybox {
-        padding: 8px;
-        font-size: 11px;
-    }
-
-    .modalBox {
-        width: 95%;
-        height: 78%;
-        border-radius: 18px;
-    }
-
-    #changelogContent {
-        height: calc(100% - 70px);
-    }
-    div[style*="margin-top:-60px"] {
-        margin-top: 10px !important;
-        max-width: 100% !important;
-    }
+                #changelogContent {
+                    height: calc(100% - 70px);
+                }
+                div[style*="margin-top:-60px"] {
+                    margin-top: 10px !important;
+                    max-width: 100% !important;
+                }
             }
 
             #dateInput {
@@ -483,31 +474,31 @@
             
             #dateInput:focus {
                 border-color: #4a4a4a;
+                background: #1b1b1b;
                 outline: none;
             }
 
             .themeButton {
-    background: #1d1d1d;
-    color: #f2f2f2;
-    border: 1px solid #303030;
-    border-radius: 12px;
-    padding: 11px 18px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    font-family: 'Inter', sans-serif;
-    transition: 0.18s ease;
-}
+                background: #1d1d1d;
+                color: #f2f2f2;
+                border: 1px solid #303030;
+                border-radius: 12px;
+                padding: 11px 18px;
+                font-size: 14px;
+                font-weight: 600;
+                cursor: pointer;
+                font-family: 'Inter', sans-serif;
+                transition: 0.18s ease;
+            }
 
-.themeButton:hover {
-    opacity: 0.93;
-    top: calc(50% - 1px);
-}
+            .themeButton:hover {
+                opacity: 0.93;
+                top: calc(50% - 1px);
+            }
 
-.themeButton:active {
-    opacity: 0.8;
-}
-
+            .themeButton:active {
+                opacity: 0.8;
+            }
             /* LIGHT MODE */
 
             body,
