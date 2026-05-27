@@ -88,17 +88,16 @@
             /* BUTTONS */
         
             .buttonRow {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 14px;
-    margin-top: 16px;
-    margin-bottom: 18px;
-    flex-wrap: wrap;
-    position: relative;
-
-    width: 100%;
-}
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 14px;
+                margin-top: 16px;
+                margin-bottom: 18px;
+                flex-wrap: wrap;
+                position: relative;
+                width: 100%;
+            }
 
 .buttonRow .pushRight {
     position: absolute;
@@ -469,8 +468,16 @@
     }
 
     #dateInput {
-        font-size: 14px !important;
-        padding: 12px !important;
+        width: 100%;
+        background: #171717;
+        color: white;
+        border: 1px solid #2b2b2b;
+        border-radius: 12px;
+        padding: 10px 12px;
+        font-size: 13px;
+        font-family: 'JetBrains Mono', monospace;
+        outline: none;
+        transition: 0.15s ease;
     }
             }
 
@@ -569,6 +576,13 @@
                 background: #d9d9d9;
                 border-color: #bdbdbd;
             }
+
+            body.lightmode #dateInput {
+                background: #ebebeb;
+                color: #111;
+                border-color: #d7d7d7;
+            }
+            
             body.lightmode #dateInput:focus {
                 border-color: #888888;
             }
@@ -751,18 +765,6 @@
                 id="dateInput"
                 placeholder="DD/MM/YYYY"
                 oninput="validateDateInput(this)"
-                style="
-                    width:100%;
-                    background:#171717;
-                    color:white;
-                    border:1px solid #2b2b2b;
-                    border-radius:12px;
-                    padding:10px 12px;
-                    font-size:13px;
-                    font-family:'JetBrains Mono', monospace;
-                    outline:none;
-                    transition:0.15s ease;
-                "
             >
         
             <div
