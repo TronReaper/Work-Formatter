@@ -84,7 +84,7 @@
             textarea::placeholder {
                 color: #777;
             }
-        
+            
             /* BUTTONS */
         
             .buttonRow {
@@ -474,6 +474,11 @@
     }
             }
 
+            #dateInput:focus {
+                border-color: #4a4a4a;
+                outline: none;
+            }
+
             .themeButton {
     background: #1d1d1d;
     color: #f2f2f2;
@@ -540,7 +545,7 @@
             body.lightmode .copybox,
             body.lightmode .modalBox,
             body.lightmode #changelogContent {
-                background: #ffffff;
+                background: #ebebeb;
                 border-color: #d7d7d7;
             }
             
@@ -563,6 +568,9 @@
             body.lightmode .copybox.copyperm:not(.med-special):not(.specialRowBtn) {
                 background: #d9d9d9;
                 border-color: #bdbdbd;
+            }
+            body.lightmode #dateInput:focus {
+                border-color: #888888;
             }
             
             /* BOLDER FORMATTING TEXT */
