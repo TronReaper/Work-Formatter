@@ -88,22 +88,24 @@
             /* BUTTONS */
         
             .buttonRow {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 14px;
-                margin-top: 16px;
-                margin-bottom: 18px;
-                flex-wrap: wrap;
-                position: relative;
-            
-                padding-right: 180px;
-            }
-            
-            .buttonRow .pushRight {
-                position: absolute;
-                right: 0;
-            }
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-top: 16px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+    position: relative;
+
+    width: 100%;
+}
+
+.buttonRow .pushRight {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}
         
             .mainButton {
                 background: #ffffff;
@@ -375,70 +377,103 @@
             /* MOBILE */
         
             @media (max-width: 768px) {
-        
-                body {
-                    padding: 12px;
-                }
-        
-                h1 {
-                    font-size: 28px;
-                }
-        
-                #lastUpdated {
-                    font-size: 11px;
-                }
-        
-                textarea {
-                    min-height: 180px;
-                    padding: 13px;
-                    font-size: 12px;
-                    border-radius: 14px;
-                }
-        
-                .buttonRow {
-                    flex-direction: column;
-                    gap: 10px;
-                    width: 100%;
-                }
-        
-                .mainButton {
-                    width: 100%;
-                    padding: 12px;
-                    font-size: 14px;
-                }
-        
-                .changelogBtn {
-                    font-size: 12px;
-                }
-        
-                table {
-                    min-width: 850px;
-                }
-        
-                th {
-                    font-size: 11px;
-                    padding: 10px;
-                }
-        
-                td {
-                    font-size: 11px;
-                    padding: 8px;
-                }
-        
-                .copybox {
-                    padding: 8px;
-                    font-size: 11px;
-                }
-        
-                .modalBox {
-                    width: 95%;
-                    height: 78%;
-                    border-radius: 18px;
-                }
-        
-                #changelogContent {
-                    height: calc(100% - 70px);
-                }
+
+    body {
+        padding: 12px;
+    }
+
+    h1 {
+        font-size: 28px;
+    }
+
+    #lastUpdated {
+        font-size: 11px;
+    }
+
+    textarea {
+        min-height: 180px;
+        padding: 13px;
+        font-size: 12px;
+        border-radius: 14px;
+    }
+
+    /* BUTTONS */
+    .buttonRow {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+        padding-right: 0;
+    }
+
+    .buttonRow .pushRight {
+        position: static;
+        transform: none;
+        width: 100%;
+    }
+
+    .mainButton,
+    .secondaryButton,
+    .changelogBtn {
+        width: 100%;
+    }
+
+    .mainButton {
+        padding: 13px;
+        font-size: 14px;
+        border-radius: 12px;
+    }
+
+    .changelogBtn {
+        background: #1d1d1d;
+        border: 1px solid #303030;
+        border-radius: 12px;
+        padding: 12px;
+        color: #f2f2f2;
+        font-size: 13px;
+    }
+
+    table {
+        min-width: 850px;
+    }
+
+    th {
+        font-size: 11px;
+        padding: 10px;
+    }
+
+    td {
+        font-size: 11px;
+        padding: 8px;
+    }
+
+    .copybox {
+        padding: 8px;
+        font-size: 11px;
+    }
+
+    .modalBox {
+        width: 95%;
+        height: 78%;
+        border-radius: 18px;
+    }
+
+    #changelogContent {
+        height: calc(100% - 70px);
+    }
+
+    /* DATE INPUT FIX */
+    div[style*="margin-top:-60px"] {
+        margin-top: 10px !important;
+        max-width: 100% !important;
+    }
+
+    #dateInput {
+        font-size: 14px !important;
+        padding: 12px !important;
+    }
             }
 
             /* LIGHT MODE */
