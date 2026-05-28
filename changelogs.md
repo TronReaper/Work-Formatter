@@ -61,3 +61,11 @@
   (This took me 2 hours to fix.)
 
 - Added date support, not included in the button if invalid format.
+
+25/5/2025
+- Added Light Theme. 
+
+- Fixed multiple aspects of light theme. 
+
+27/5/2026
+- Fixed and optimized overall layout. 
