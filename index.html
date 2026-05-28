@@ -491,15 +491,15 @@
             }
 
             .themeButton:hover {
-                opacity: 0.93;
+                background: #252525;
                 top: calc(50% - 1px);
             }
 
             .themeButton:active {
-                opacity: 0.8;
+                transform: scale(0.98);
+                top: 50%;
             }
             /* LIGHT MODE */
-
             body,
             textarea,
             table,
@@ -555,10 +555,13 @@
                 border-color: #cccccc;
             }
             
-            body.lightmode .mainButton,
-            body.lightmode .themeButton {
+            body.lightmode .mainButton {
                 background: #111;
                 color: white;
+            }
+            body.lightmode .themeButton {
+                background: #ffffff;
+                color: #111;
             }
             
             body.lightmode .copybox.copyperm:not(.med-special):not(.specialRowBtn) {
