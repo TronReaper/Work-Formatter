@@ -458,6 +458,12 @@
                     margin-top: 10px !important;
                     max-width: 100% !important;
                 }
+                    .themeButton:active {
+                        transform: scale(0.98);
+                    }
+                .themeButton:hover {
+                    transform: none;
+                }
             }
 
             #dateInput {
@@ -527,7 +533,8 @@
             body.lightmode td,
             body.lightmode .copybox,
             body.lightmode input,
-            body.lightmode textarea {
+            body.lightmode textarea, 
+            body.lightmode #changelogContent {
                 color: #111;
             }
             
