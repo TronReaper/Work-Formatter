@@ -1044,6 +1044,20 @@
                 data-copy="${encodeURIComponent(value)}"
                 onclick="copyText(this)">${value || '-'}</div></td>`;
             }
+
+            function extractMedBetweenTypes(lines) {
+                for (const line of lines) {
+                    const matches = [...line.matchAll(/TABLET|CAPSULE|BOX/gi)];
+                    if (matches.length >= 2) {
+                        const firstEnd = matches[0].index + matches[0][0].length;
+                        const secondStart = matches[1].index;
+                        const between = line.slice(firstEnd, secondStart).trim();
+                        const parts = between.split(/\t|\s{2,}/).map(x => x.trim()).filter(Boolean);
+                        if (parts.length > 0) return parts[0];
+                    }
+                }
+                return '';
+            }
             
             function formatEntries() {
 
@@ -1284,8 +1298,10 @@
                         
                             med = fallback[fallback.length - 1] || '';
                         }
-                    
-                    break;
+                        if (!med) {
+                            med = extractMedBetweenTypes(entryLines);
+                        }
+                        break;
                     }
     
                     // AMOUNT
