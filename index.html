@@ -1235,6 +1235,17 @@
                             med = fullName;
                             break;
                         }
+                        // RITALIN SPECIAL CASE
+                        const isRitalinCase = lowerLine.includes('ritalin');
+
+                        if (isRitalinCase) {
+                            const fullName = afterMedRaw
+                                .split(/\t|\s{2,}/)[0]
+                                .replace(/\s+/g, ' ')
+                                .trim();
+                            med = fullName;
+                            break;
+                        }
                     
                         // ------------------------------
                         // 🟢 NORMAL CASE
