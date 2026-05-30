@@ -1298,10 +1298,10 @@
                         
                             med = fallback[fallback.length - 1] || '';
                         }
-                        if (!med) {
-                            med = extractMedBetweenTypes(entryLines);
-                        }
                         break;
+                    }
+                    if (!med) {
+                            med = extractMedBetweenTypes(entryLines);
                     }
     
                     // AMOUNT
