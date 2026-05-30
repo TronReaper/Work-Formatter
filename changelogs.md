@@ -68,4 +68,7 @@
 - Fixed multiple aspects of light theme. 
 
 27/5/2026
-- Fixed and optimized overall layout. 
+- Fixed and optimized overall layout.
+
+30/5/2026
+- Fixed the formatter to detect the med if the system made a mistake. (RITALIN 30MG) 
