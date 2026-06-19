@@ -284,6 +284,27 @@
                 visibility: visible;
                 pointer-events: auto;
             }
+
+            #fullModal {
+                position: fixed;
+                inset: 0;
+                background: rgba(0,0,0,0.72);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                backdrop-filter: blur(6px);
+                z-index: 999;
+            
+                opacity: 0;
+                visibility: hidden;
+                pointer-events: none;
+                transition: opacity 0.2s ease, visibility 0.2s ease;
+            }   
+            #fullModal.show {
+                opacity: 1;
+                visibility: visible;
+                pointer-events: auto;
+            }
         
             .modalBox {
                 background: #161616;
@@ -703,7 +724,35 @@
         </div>
     
         <!-- TOP SECTION -->
-    
+        <div id="fullModal">
+            
+            <div class="modalBox">
+                <div class="closeBtn" onclick="closeFullModel()">
+                    ✕
+                </div>
+
+                <h3 style="margin-top:0;font-family:'Space Grotesk',sans-serif;">
+                    FULL
+                </h3>
+
+                <div style="
+                    displat:flex;
+                    flex-direction:column;
+                    gap:12px;
+                    margin-top:20px;
+                ">
+
+                    <button class="mainButton" onclick="copyForm()">
+                        FORM C
+                    </button>
+
+                    <button class="mainButton">
+                        BLUE FILE
+                    </button>
+                </div>
+            </div>
+        </div>
+        
         <div class="topSection">
     
             <div id="lastUpdated"></div>
@@ -741,7 +790,10 @@
             <button class="changelogBtn" onclick="openChangelog()">
                 Changelogs
             </button>
-    
+
+            <button class="changelogBtn" onclick="epenFullModal()">
+                FULL
+            </button>
         </div>
     
         <!-- DATE INPUT -->
@@ -828,6 +880,17 @@
                 const modal = document.getElementById("changelogModal");
         
                 modal.classList.remove("show");
+            }
+
+            function openFullModal() {
+
+                document.getElementById("fullModal")
+                    .classList.add("show");
+            }           
+            function closeFullModal() {
+            
+                document.getElementById("fullModal")
+                    .classList.remove("show");
             }
     
             function cleanLine(line) {
@@ -1455,6 +1518,67 @@
             function toggleLightMode() {
 
                 document.body.classList.toggle('lightmode');
+            }
+            
+            function copyFormC() {
+                const rows =
+                    [...document.querySelectorAll("#output tbody tr")];
+            
+                const dateInput =
+                    document.getElementById("dateInput");
+            
+                const hasDate =
+                    validateDateInput(dateInput);
+            
+                const dateValue =
+                    dateInput.value.trim();
+            
+                const lines = [];
+            
+                for (let i = rows.length - 1; i >= 0; i--) {
+            
+                    const row = rows[i];
+            
+                    const rowCopyBtn =
+                        row.querySelector(".rowCopyBtn");
+            
+                    const isSpecial =
+                        rowCopyBtn?.dataset.isspecial === "true";
+            
+                    if (isSpecial) continue;
+            
+                    const invoice =
+                        decodeURIComponent(rowCopyBtn.dataset.invoice || '');
+            
+                    const name =
+                        decodeURIComponent(rowCopyBtn.dataset.name || '');
+            
+                    const address =
+                        decodeURIComponent(rowCopyBtn.dataset.address || '');
+            
+                    const id =
+                        decodeURIComponent(rowCopyBtn.dataset.id || '');
+            
+                    const med =
+                        decodeURIComponent(rowCopyBtn.dataset.med || '');
+            
+                    const amount =
+                        decodeURIComponent(rowCopyBtn.dataset.amount || '');
+            
+                    lines.push([
+                        ...(hasDate ? [dateValue] : []),
+                        invoice,
+                        name,
+                        address,
+                        id,
+                        med,
+                        amount
+                    ].join('\t'));
+                }
+            
+                navigator.clipboard.writeText(
+                    lines.join('\n')
+                );
             }
         </script>
     
