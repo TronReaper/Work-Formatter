@@ -1248,26 +1248,16 @@ if (nameIdx !== -1 && allCells[nameIdx + 4]) {
     
                     // ADDRESS
     
-                    let address = '';
+                     let address = '';
 
-const idIdx = allCells.findIndex(c =>
-    c.replace(/[^a-zA-Z0-9-]/g, '') === identification && identification !== ''
-);
-
-if (idIdx !== -1) {
-    let addrCells = [];
-let collected = 0;
-for (let i = idIdx + 1; i < allCells.length && collected < 7; i++) {
-    const val = (allCells[i] || '').trim();
-    if (val.includes('@')) continue;
-    addrCells.push(val);
-    collected++;
-}
-address = addrCells
-    .filter(x => x && x !== '-')
-    .join(', ')
-    .replace(/,\s*,+/g, ',')
-    .trim();
+if (nameIdx !== -1) {
+    const addrStart = nameIdx + 7;
+    const addrCells = allCells.slice(addrStart, addrStart + 7);
+    address = addrCells
+        .filter(x => x && x.trim() !== '-' && !x.includes('@'))
+        .join(', ')
+        .replace(/,\s*,+/g, ',')
+        .trim();
 }
     
                     // MED
