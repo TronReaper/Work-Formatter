@@ -1262,16 +1262,11 @@ const idIdx = allCells.findIndex(c =>
 
 if (idIdx !== -1) {
     let addrCells = [];
-    let count = 0;
-    for (let i = idIdx + 1; i < allCells.length; i++) {
-        const val = allCells[i].trim();
-        if (!val || val === '-') continue;
-        if (val.match(/^[\w.+-]+@[\w-]+\.\w+$/)) continue; // skip email
+    for (let i = idIdx + 1; i <= idIdx + 6; i++) {
+        const val = (allCells[i] || '').trim();
         addrCells.push(val);
-        count++;
-        if (count === 7) break;
     }
-    address = addrCells.join(', ');
+address = addrCells.filter(x => x && x !== '-').join(', ');
 }
     
                     // MED
