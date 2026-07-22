@@ -1262,11 +1262,18 @@ const idIdx = allCells.findIndex(c =>
 
 if (idIdx !== -1) {
     let addrCells = [];
-    for (let i = idIdx + 1; i <= idIdx + 6; i++) {
-        const val = (allCells[i] || '').trim();
-        addrCells.push(val);
-    }
-address = addrCells.filter(x => x && x !== '-').join(', ');
+let collected = 0;
+for (let i = idIdx + 1; i < allCells.length && collected < 7; i++) {
+    const val = (allCells[i] || '').trim();
+    if (val.includes('@')) continue;
+    addrCells.push(val);
+    collected++;
+}
+address = addrCells
+    .filter(x => x && x !== '-')
+    .join(', ')
+    .replace(/,\s*,+/g, ',')
+    .trim();
 }
     
                     // MED
