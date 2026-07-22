@@ -1409,8 +1409,12 @@ if (nameIdx !== -1 && allCells[nameIdx + 14]) {
                     const isSpecialMed = specialMeds.some(m =>
                         medClean.includes(normalize(m))
                     );
-    
-                    // INVOIC
+
+                    const invoice = nameIdx !== -1 && allCells[nameIdx + 14]
+                        ? allCells[nameIdx + 14].trim()
+                        : '';
+
+                    const stock = '';
                     
                     html += `
                         <tr>
