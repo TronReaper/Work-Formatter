@@ -1238,29 +1238,41 @@
                     // IDENTIFICATION
     
                     let identification = '';
-    
-                    if (entryLines[3]) {
-    
-                        identification =
-                            entryLines[3].replace(/[^a-zA-Z0-9-]/g, '');
-                    }
+
+const allCells = firstLine.split('\t');
+const phoneIdx = allCells.findIndex(c => c.match(/^\+\d+$/));
+
+if (phoneIdx !== -1) {
+    for (let i = phoneIdx + 1; i < allCells.length; i++) {
+        const val = allCells[i].trim();
+        if (val && val !== '-') {
+            identification = val.replace(/[^a-zA-Z0-9-]/g, '');
+            break;
+        }
+    }
+}
     
                     // ADDRESS
     
-                    let addressLines =
-                        entryLines.slice(6, 19);
-    
-                    addressLines = addressLines
-                        .map(x => x.trim())
-                        .filter(x => x !== '-')
-                        .filter(x => x !== '');
-    
-                    let address = addressLines.join(', ');
-    
-                    address = address
-                        .replace(/,\s*,+/g, ',')
-                        .replace(/\s+/g, ' ')
-                        .trim();
+                    let address = '';
+
+const idIdx = allCells.findIndex(c =>
+    c.replace(/[^a-zA-Z0-9-]/g, '') === identification && identification !== ''
+);
+
+if (idIdx !== -1) {
+    let addrCells = [];
+    let count = 0;
+    for (let i = idIdx + 1; i < allCells.length; i++) {
+        const val = allCells[i].trim();
+        if (!val || val === '-') continue;
+        if (val.match(/^[\w.+-]+@[\w-]+\.\w+$/)) continue; // skip email
+        addrCells.push(val);
+        count++;
+        if (count === 7) break;
+    }
+    address = addrCells.join(', ');
+}
     
                     // MED
                     let med = '';
