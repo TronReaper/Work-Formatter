@@ -1252,7 +1252,7 @@ if (nameIdx !== -1 && allCells[nameIdx + 4]) {
 
 if (nameIdx !== -1) {
     const addrStart = nameIdx + 7;
-    const addrCells = allCells.slice(addrStart, addrStart + 7);
+    const addrCells = allCells.slice(addrStart, addrStart + 6);
     address = addrCells
         .filter(x => x && x.trim() !== '-' && !x.includes('@'))
         .join(', ')
