@@ -1240,16 +1240,10 @@
                     let identification = '';
 
 const allCells = firstLine.split('\t');
-const phoneIdx = allCells.findIndex(c => c.match(/^\+\d+$/));
+const nameIdx = allCells.findIndex(c => c.trim().replace(/\s+\.\s*$/, '').trim() === name);
 
-if (phoneIdx !== -1) {
-    for (let i = phoneIdx + 1; i < allCells.length; i++) {
-        const val = allCells[i].trim();
-        if (val && val !== '-') {
-            identification = val.replace(/[^a-zA-Z0-9-]/g, '');
-            break;
-        }
-    }
+if (nameIdx !== -1 && allCells[nameIdx + 4]) {
+    identification = allCells[nameIdx + 4].trim().replace(/[^a-zA-Z0-9-]/g, '');
 }
     
                     // ADDRESS
