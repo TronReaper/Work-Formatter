@@ -1259,6 +1259,12 @@ if (nameIdx !== -1) {
         .replace(/,\s*,+/g, ',')
         .trim();
 }
+
+                    let invoice = '';
+
+if (nameIdx !== -1 && allCells[nameIdx + 14]) {
+    invoice = allCells[nameIdx + 14].trim();
+}
     
                     // MED
                     let med = '';
@@ -1404,77 +1410,7 @@ if (nameIdx !== -1) {
                         medClean.includes(normalize(m))
                     );
     
-                    // INVOICE LOOKUP
-    
-    
-                    let invoice = '';
-                    
-                    function timeToSeconds(t) {
-                        const [h, m, s] = t.split(':').map(Number);
-                        return h * 3600 + m * 60 + s;
-                    }
-                    const baseTimeSec = timeToSeconds(time);
-                                    
-                    for (const secondEntry of secondEntries) {
-                    
-                        let foundMed = false;
-                        let foundName = false;
-                    
-                        for (let i = 0; i < secondEntry.length; i++) {
-                    
-                            const line = secondEntry[i];
-                            const lower = line.toLowerCase();
-                    
-                            const tMatch = line.match(/\b(\d{2}:\d{2}:\d{2})\b/);
-                            const lineTime = tMatch ? tMatch[1] : null;
-                    
-                            if (!foundMed && lower.includes(med.toLowerCase())) {
-                                foundMed = true;
-                            }
-                    
-                            if (foundMed && !foundName && lower.includes(name.toLowerCase())) {
-                                foundName = true;
-                            }
-                    
-                            if (foundName && lineTime) {
-                    
-                                const lineTimeSec = timeToSeconds(lineTime);
-                            
-                                if (Math.abs(lineTimeSec - baseTimeSec) <= 2) {
-                            
-                                    const invoiceMatch = line.match(/SO\/[\w/]+/);
-                            
-                                    if (invoiceMatch) {
-                                        invoice = invoiceMatch[0];
-                                    }
-                                }
-                            }
-                        }
-            
-                        if (invoice) break;
-                    }
-    
-                    let stock = '';
-    
-                    // create unique key for THIS exact entry
-                    const key = `${med.toLowerCase()}|${name.toLowerCase()}|${baseTimeSec}`;
-                    
-                    // get how many times we've already seen this exact combo
-                    let occurrenceIndex = stockMatchTracker.get(key) || 0;
-                    
-                    // run stock extraction using correct offset
-                    stock = getStockFromFour00(
-                        secondEntries,
-                        med,
-                        name,
-                        baseTimeSec,
-                        occurrenceIndex
-                    );
-                    
-                    // ONLY increment if match actually exists in data
-                    if (stock) {
-                        stockMatchTracker.set(key, occurrenceIndex + 1);
-                    }
+                    // INVOIC
                     
                     html += `
                         <tr>
