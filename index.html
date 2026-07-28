@@ -1417,44 +1417,51 @@
                     }
                     const baseTimeSec = timeToSeconds(time);
                                     
-                    for (const secondEntry of secondEntries) {
-                    
-                        let foundMed = false;
-                        let foundName = false;
-                    
-                        for (let i = 0; i < secondEntry.length; i++) {
-                    
-                            const line = secondEntry[i];
-                            const lower = line.toLowerCase();
-                    
-                            const tMatch = line.match(/\b(\d{2}:\d{2}:\d{2})\b/);
-                            const lineTime = tMatch ? tMatch[1] : null;
-                    
-                            if (!foundMed && lower.includes(med.toLowerCase())) {
-                                foundMed = true;
-                            }
-                    
-                            if (foundMed && !foundName && lower.includes(name.toLowerCase())) {
-                                foundName = true;
-                            }
-                    
-                            if (foundName && lineTime) {
-                    
-                                const lineTimeSec = timeToSeconds(lineTime);
-                            
-                                if (Math.abs(lineTimeSec - baseTimeSec) <= 2) {
-                            
-                                    const invoiceMatch = line.match(/SO\/[\w/]+/);
-                            
-                                    if (invoiceMatch) {
-                                        invoice = invoiceMatch[0];
-                                    }
-                                }
-                            }
-                        }
-            
-                        if (invoice) break;
-                    }
+                    // First pass: exact match
+for (const secondEntry of secondEntries) {
+    let foundMed = false;
+    let foundName = false;
+    for (let i = 0; i < secondEntry.length; i++) {
+        const line = secondEntry[i];
+        const lower = line.toLowerCase();
+        const tMatch = line.match(/\b(\d{2}:\d{2}:\d{2})\b/);
+        const lineTime = tMatch ? tMatch[1] : null;
+        if (!foundMed && lower.includes(med.toLowerCase())) foundMed = true;
+        if (foundMed && !foundName && lower.includes(name.toLowerCase())) foundName = true;
+        if (foundName && lineTime) {
+            const lineTimeSec = timeToSeconds(lineTime);
+            if (lineTimeSec === baseTimeSec) {
+                const invoiceMatch = line.match(/SO\/[\w/]+/);
+                if (invoiceMatch) invoice = invoiceMatch[0];
+            }
+        }
+    }
+    if (invoice) break;
+}
+
+// Second pass: 1 second tolerance
+if (!invoice) {
+    for (const secondEntry of secondEntries) {
+        let foundMed = false;
+        let foundName = false;
+        for (let i = 0; i < secondEntry.length; i++) {
+            const line = secondEntry[i];
+            const lower = line.toLowerCase();
+            const tMatch = line.match(/\b(\d{2}:\d{2}:\d{2})\b/);
+            const lineTime = tMatch ? tMatch[1] : null;
+            if (!foundMed && lower.includes(med.toLowerCase())) foundMed = true;
+            if (foundMed && !foundName && lower.includes(name.toLowerCase())) foundName = true;
+            if (foundName && lineTime) {
+                const lineTimeSec = timeToSeconds(lineTime);
+                if (Math.abs(lineTimeSec - baseTimeSec) === 1) {
+                    const invoiceMatch = line.match(/SO\/[\w/]+/);
+                    if (invoiceMatch) invoice = invoiceMatch[0];
+                }
+            }
+        }
+        if (invoice) break;
+    }
+}
     
                     let stock = '';
     
