@@ -1008,7 +1008,7 @@
                 box.classList.toggle('show');
             }
     
-            function getStockFromFour00(secondEntries, med, name, baseTimeSec, occurrenceIndex = 0) {
+            function getStockFromFour00(secondEntries, med, name, baseTimeSec, occurrenceIndex = 0, tolerance = 0) {
     
                 const normalize = (str) =>
                     (str || '')
@@ -1055,7 +1055,7 @@
             
                             const lineTimeSec = timeToSeconds(lineTime);
             
-                            if (lineTimeSec === baseTimeSec) {
+                            if (Math.abs(lineTimeSec - baseTimeSec) <= tolerance) {
                                 localTimeMatch = true;
                             }
                         }
@@ -1070,8 +1070,6 @@
                                 for (const m of matches) {
             
                                     count++;
-    
-                                    
             
                                     if (count === countTarget) {
                                         return m.split('.')[0].replace(/,/g, '');
@@ -1472,15 +1470,12 @@ if (!invoice) {
                     let occurrenceIndex = stockMatchTracker.get(key) || 0;
                     
                     // run stock extraction using correct offset
-                    stock = getStockFromFour00(
-                        secondEntries,
-                        med,
-                        name,
-                        baseTimeSec,
-                        occurrenceIndex
-                    );
-                    
-                    // ONLY increment if match actually exists in data
+                    stock = getStockFromFour00(secondEntries, med, name, baseTimeSec, occurrenceIndex, 0);
+
+                    if (!stock) {
+                        stock = getStockFromFour00(secondEntries, med, name, baseTimeSec, occurrenceIndex, 1);
+                    }
+
                     if (stock) {
                         stockMatchTracker.set(key, occurrenceIndex + 1);
                     }
