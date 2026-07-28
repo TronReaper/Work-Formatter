@@ -1055,7 +1055,7 @@
             
                             const lineTimeSec = timeToSeconds(lineTime);
             
-                            if (Math.abs(lineTimeSec - baseTimeSec) <= 2) {
+                            if (lineTimeSec === baseTimeSec) {
                                 localTimeMatch = true;
                             }
                         }
